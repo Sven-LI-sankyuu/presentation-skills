@@ -1,0 +1,4 @@
+interface:
+  display_name: "PPT Diagram Copilot"
+  short_description: "Build editable complex PPT diagrams with connector validation"
+  default_prompt: "Create a publication-ready complex diagram pack (for architecture/dataflow/user-journey): plan, mermaid sources, editable PPT, and connector checks."
