@@ -45,6 +45,11 @@ npx playwright install chromium
 - 参考官方文档（阿里云 ISI 语音合成概述）：
   - `https://help.aliyun.com/zh/isi/developer-reference/overview-of-speech-synthesis`
 
+推荐优先级（明确，不做静默降级）：
+
+1. **先进的 TTS API（推荐，优先级最高）**：例如阿里云 ISI（本 skill 默认实现），或你们自行接入其他更先进的 TTS。
+2. **本地替代（仅用于无秘钥快速验证）**：例如 macOS `say`（无需密钥，但音色/自然度通常弱于先进 TTS）。
+
 也可以替换其他 TTS 服务商，但需要你们自行研究对应 API，并保证输出满足：
 - 分段音频可落盘（每段一个文件）
 - 可拿到每段时长（用于 timeline）
@@ -109,6 +114,27 @@ npx playwright install chromium
 2. 分段 TTS
 - 调用 `scripts/tts_build_workspace.py`，逐段生成音频并生成 `timeline/timeline.json`。
 - 产物：`segment_audio/*.wav`、`timeline/timeline.json`、可选 `audio/timeline_audio.mp3`。
+
+### 可选：无秘钥的本地 TTS（macOS say）
+
+当你暂时拿不到任何 TTS API 的秘钥/Token，但仍希望先把“网页录屏/字幕/合成”跑通，可以显式改用 macOS `say`：
+
+```bash
+python3 skills/web-demo-video-synthesis/scripts/tts_build_workspace_macos_say.py \
+  --workspace-dir temp/web_demo_video_ws/demo01 \
+  --cues-json temp/web_demo_video_ws/demo01/inputs/cues.json \
+  --voice Tingting \
+  --sample-rate 48000 \
+  --inter-gap-sec 2.5 \
+  --scroll-lag-sec 1.2 \
+  --mix-audio true
+```
+
+注意：
+- 这是 **显式选择** 的替代方案，不会在 `tts_build_workspace.py` 里自动 fallback（避免“看起来成功”的静默降级）。
+- `voice` 的取值与服务商强相关：
+  - ISI 的 voice（例如 `emily`/`zhida`）以服务商文档为准；
+  - macOS `say` 的 voice（例如 `Tingting`/`Samantha`）用 `say -v '?'` 查询。
 
 3. 基于 timeline 二次录屏（无字幕）
 - 使用 `skills/web-demo-video-synthesis/scripts/record_demo_from_timeline.mjs --no-captions true`。

@@ -108,3 +108,12 @@
    - 强烈建议加 `--expect-selector \"#step-hero\"` 或 `--expect-title-includes \"YourTitle\"`，确保确实命中目标页面。
 3. SPA/持续请求页面若卡在打开阶段：
    - 改用 `--wait-until domcontentloaded`（避免 `networkidle` 等不到）。
+
+## 10. 没有 TTS 秘钥，如何先跑通视频流水线？
+
+推荐优先级：
+1. 优先找人类拿到先进 TTS API 的秘钥/Token（本 skill 默认提供阿里云 ISI REST 实现）。
+2. 如果确实暂时拿不到，可以显式使用本地替代（例如 macOS `say`）先把录屏/字幕/合成跑通。
+
+示例（macOS）：
+- `python3 skills/web-demo-video-synthesis/scripts/tts_build_workspace_macos_say.py --workspace-dir ... --cues-json ...`
