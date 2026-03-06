@@ -63,7 +63,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--skill-dir",
-        default=str((Path(__file__).resolve().parents[4] / "web-demo-video-synthesis").resolve()),
+        default=str((Path(__file__).resolve().parents[3] / "web-demo-video-synthesis").resolve()),
         help="web-demo-video-synthesis 的目录（用于复用混音脚本）",
     )
     parser.add_argument("--ffmpeg", default="ffmpeg", help="ffmpeg 可执行文件名/路径")

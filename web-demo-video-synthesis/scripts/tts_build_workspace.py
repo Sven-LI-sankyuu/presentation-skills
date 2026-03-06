@@ -163,12 +163,37 @@ def normalize_cues(cues_payload: Dict[str, Any]) -> List[Dict[str, Any]]:
 
 
 def wav_duration_seconds(path: Path) -> float:
+    """计算 wav 时长（秒）。
+
+    重要：不要使用 `wf.getnframes()` 直接信任 header。
+    某些 TTS 服务会返回“header 标注的 data chunk size 大于实际文件长度”的 wav：
+    - `wave` 会返回被 header 夸大的 nframes；
+    - 但解码器（如 ffmpeg）会以实际可读数据为准。
+
+    因此这里用 `readframes()` 逐块读取到 EOF，并按实际读取到的字节数统计 frame 数，
+    以获得“可播放音频”的真实时长。
+    """
+
     with wave.open(str(path), "rb") as wf:
-        frames = wf.getnframes()
-        rate = wf.getframerate()
+        rate = int(wf.getframerate())
         if rate <= 0:
             raise RuntimeError(f"非法采样率: {rate}")
-        return float(frames / rate)
+        nch = int(wf.getnchannels())
+        sw = int(wf.getsampwidth())
+        bytes_per_frame = nch * sw
+        if bytes_per_frame <= 0:
+            raise RuntimeError(f"非法 bytes_per_frame: nch={nch}, sampwidth={sw}")
+
+        total_frames = 0
+        # 每次按 ~1 秒读取，避免一次性读取超大数据
+        chunk_frames = max(1024, rate)
+        while True:
+            data = wf.readframes(chunk_frames)
+            if not data:
+                break
+            total_frames += len(data) // bytes_per_frame
+
+        return float(total_frames / rate)
 
 
 def synthesize_isi_rest(cfg: ISIRestConfig, text: str, out_wav: Path, timeout_sec: int) -> Dict[str, Any]:
@@ -325,6 +350,16 @@ def main() -> None:
             dur = wav_duration_seconds(out_wav)
             segment_paths.append(out_wav)
             segment_durations.append(dur)
+            # 仍然更新/修正 duration（有些 wav header 可能不可信，需以可读数据为准）
+            meta_p = ws_seg / f"seg_{i:03d}.meta.json"
+            if meta_p.exists():
+                try:
+                    meta = read_json(meta_p)
+                    meta["duration_sec"] = round(dur, 3)
+                    write_json(meta_p, meta)
+                except Exception:  # noqa: BLE001
+                    # 审计文件不应阻断主流程；但 duration 会在 timeline 中体现
+                    pass
             continue
 
         # 需要重生成（force 或首次生成）

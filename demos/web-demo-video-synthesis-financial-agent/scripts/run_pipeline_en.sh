@@ -2,7 +2,7 @@
 set -euo pipefail
 
 DEMO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-REPO_ROOT="$(cd "${DEMO_DIR}/../../.." && pwd)"
+REPO_ROOT="$(cd "${DEMO_DIR}/../.." && pwd)"
 SKILL_DIR="${REPO_ROOT}/web-demo-video-synthesis"
 
 DEFAULT_PORT="6151"
@@ -108,7 +108,7 @@ if ! curl -fsS "${RECORD_URL}" | grep -q 'id="step-hero"'; then
   exit 1
 fi
 
-echo "[2/5] 生成分段配音 + timeline（macOS say，无需密钥）"
+echo "[2/5] 生成分段配音 + timeline（TTS_PROVIDER=${TTS_PROVIDER}）"
 tts_force_flag="--no-force-tts"
 if [[ "${FORCE_TTS}" == "1" ]]; then
   tts_force_flag="--force-tts"

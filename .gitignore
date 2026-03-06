@@ -11,5 +11,8 @@
 # Demo artifacts (generated locally)
 demos/**/_output/
 
+# Workspace cache (generated locally)
+temp/
+
 # Legacy workspace (not part of published skills)
 old/

@@ -42,8 +42,11 @@ npx playwright install chromium
   - `Appkey`（项目级 Appkey）
   - `AccessToken`（短期 token）
   - 保存为 `key.json`，字段名兼容：`appkey/app_key/api_key` 与 `token/access_token/AccessToken/accessToken`
-- 参考官方文档（阿里云 ISI 语音合成概述）：
-  - `https://help.aliyun.com/zh/isi/developer-reference/overview-of-speech-synthesis`
+- 给人类的参考链接（建议在索要秘钥时一并发给对方；链接可能会变化，若失效请在阿里云文档站内搜索关键词）：
+  - 控制台（NLS Portal / 智能语音交互）：`https://nls-portal.console.aliyun.com/overview`
+  - RESTful API 文档（语音合成）：`https://help.aliyun.com/zh/isi/developer-reference/restful-api-3`
+    - 备注：我在 2026-03-06（Asia/Shanghai）验证过该链接可访问，但页面内部锚点（`#topic-...`）可能不稳定。
+  - ISI 文档入口（用于查“Token 获取方式/鉴权说明/参数表”等）：`https://help.aliyun.com/zh/isi/`
 
 推荐优先级（明确，不做静默降级）：
 
