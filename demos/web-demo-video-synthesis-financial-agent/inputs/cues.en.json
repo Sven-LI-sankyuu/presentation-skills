@@ -1,0 +1,35 @@
+{
+  "lang": "en",
+  "title": "Financial Agent web demo narration cues (locked, segmented)",
+  "cues": [
+    {
+      "id": "step-hero",
+      "text": "Hi everyone. This is an end-to-end demo: a single web page that introduces a frame-driven financial agent, with narration, scrolling, and captions all anchored to one auditable timeline."
+    },
+    {
+      "id": "step-problem",
+      "text": "In real research, the problem is rarely crisp. You decide under multiple objectives, hard constraints, and incomplete information. The agent’s value is not a point forecast. It is turning the decision process into something explainable and reproducible."
+    },
+    {
+      "id": "step-architecture",
+      "text": "The agent has three layers: the data layer standardizes market, macro, and fundamental signals; the reasoning layer organizes evidence and hypotheses into frames; and the execution layer translates recommendations into auditable actions with risk controls."
+    },
+    {
+      "id": "step-frames",
+      "text": "A frame is a decision card: goals, constraints, the current market regime, and evidence for and against. Multiple frames form a traceable graph, which naturally supports ablations and controlled comparisons."
+    },
+    {
+      "id": "step-guardrails",
+      "text": "For an academic-grade system, we prefer to fail correctly. Guardrails should stop the pipeline when data is missing, definitions conflict, or risk limits are breached, and they should emit a precise diagnosis instead of silently degrading."
+    },
+    {
+      "id": "step-demo",
+      "text": "Now a tiny interaction: change the risk preference, and the page updates a toy allocation and a confidence-band sketch. During recording, the timeline drives page scrolling so visuals stay synchronized with the voiceover."
+    },
+    {
+      "id": "step-eval",
+      "text": "Finally, evaluation. Beyond returns and drawdowns, we measure process metrics: evidence coverage, counterfactual consistency, and diagnosability of failures. That is how a demo becomes a research system."
+    }
+  ]
+}
+

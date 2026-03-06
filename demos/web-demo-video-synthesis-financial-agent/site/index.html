@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="zh">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FramePilot：帧驱动金融 Agent</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section id="step-hero" class="panel hero">
+        <div class="container">
+          <div class="badge">Research Demo · Frame-Based Investment Agent</div>
+          <h1>FramePilot：帧驱动的金融 Agent</h1>
+          <p class="lead">
+            不追求“猜中一个点”，而是把投资决策拆成可审计、可复盘、可做对照实验的 <span class="mono">frames</span>。
+          </p>
+          <div class="hero-grid">
+            <div class="card">
+              <div class="card-title">可解释</div>
+              <div class="card-body">每条结论都能回溯到证据、口径与假设，天然支持审稿式追问。</div>
+            </div>
+            <div class="card">
+              <div class="card-title">可复盘</div>
+              <div class="card-body">同一份数据、同一份 frame 图，能复现同一条建议与失败路径。</div>
+            </div>
+            <div class="card">
+              <div class="card-title">可扩展</div>
+              <div class="card-body">frame 是模块化单元：研究者可以替换子模块并做 ablation。</div>
+            </div>
+          </div>
+          <div class="scroll-hint">向下滚动 · 跟随旁白节奏</div>
+        </div>
+      </section>
+
+      <section id="step-problem" class="panel">
+        <div class="container">
+          <h2>问题：投研不是单目标优化</h2>
+          <div class="two-col">
+            <div class="card glass">
+              <div class="card-title">输入是噪声</div>
+              <ul class="bullets">
+                <li>宏观变量口径不一致、滞后与修订</li>
+                <li>新闻是强噪声通道，且易被叙事带偏</li>
+                <li>资产价格包含预期，信号常常互相抵消</li>
+              </ul>
+            </div>
+            <div class="card glass">
+              <div class="card-title">目标是多维</div>
+              <ul class="bullets">
+                <li>收益、回撤、换手、成本、约束同时存在</li>
+                <li>风险不是一个数字：尾部、相关、流动性都要管</li>
+                <li>更关键：研究过程必须能被审计与复现</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout">
+            <div class="callout-title">Agent 的核心价值</div>
+            <div class="callout-body">
+              把“想法 → 证据 → 决策 → 风控 → 复盘”变成一条可追溯的链，而不是一次性输出。
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="step-architecture" class="panel">
+        <div class="container">
+          <h2>架构：三层 + 可审计日志</h2>
+          <div class="arch">
+            <div class="arch-col">
+              <div class="arch-box">
+                <div class="arch-title">数据层</div>
+                <div class="arch-body">
+                  市场数据 · 财报 · 宏观 · 事件<br />
+                  <span class="muted">schema 对齐 + 口径记录 + 时间对齐</span>
+                </div>
+              </div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box">
+                <div class="arch-title">推理层（Frames）</div>
+                <div class="arch-body">
+                  假设 · 证据 · 反证 · 约束<br />
+                  <span class="muted">frame 图结构 + 可做 ablation</span>
+                </div>
+              </div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box">
+                <div class="arch-title">执行层</div>
+                <div class="arch-body">
+                  组合建议 · 交易计划 · 风控闸门<br />
+                  <span class="muted">可审计 orders + 风险预算</span>
+                </div>
+              </div>
+            </div>
+            <div class="arch-col">
+              <div class="code-card">
+                <div class="code-title">审计日志（示意）</div>
+                <pre><code class="mono">frame_id: REGIME-2026Q1
+evidence:
+  - rates: "10Y ↑, term premium ↑"
+  - credit: "IG spreads stable"
+constraints:
+  - max_drawdown: 8%
+  - turnover: &lt; 20% / month
+decision:
+  - tilt: "quality + short duration"
+  - hedge: "rate beta neutral"
+fail_fast:
+  - missing: "earnings calendar"</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="step-frames" class="panel">
+        <div class="container">
+          <h2>Frames：把决策拆成“可对照实验”的单元</h2>
+          <div class="frame-grid">
+            <div class="card glass">
+              <div class="card-title">一个 frame 是什么？</div>
+              <div class="card-body">
+                目标、约束、市场 regime、证据与反证，合成一张决策卡片。它既是 reasoning 的单位，也是实验的单位。
+              </div>
+            </div>
+            <div class="card glass">
+              <div class="card-title">为什么要图结构？</div>
+              <div class="card-body">
+                真实决策里，证据互相依赖。frame 图能表达依赖、冲突与权重，方便做可重复的“删一条证据再跑”的 ablation。
+              </div>
+            </div>
+            <div class="card glass">
+              <div class="card-title">输出不是一句话</div>
+              <div class="card-body">
+                输出包含：建议、置信区间、关键假设、以及“如果假设被推翻该怎么做”的应对分支。
+              </div>
+            </div>
+          </div>
+
+          <div class="graph">
+            <div class="graph-title">Frame Graph（示意）</div>
+            <div class="graph-body">
+              <div class="node">Regime</div>
+              <div class="edge"></div>
+              <div class="node">Objective</div>
+              <div class="edge"></div>
+              <div class="node">Evidence</div>
+              <div class="edge"></div>
+              <div class="node">Decision</div>
+              <div class="edge dashed"></div>
+              <div class="node warn">Fail-fast</div>
+            </div>
+            <div class="muted small">虚线表示：当口径冲突或数据缺失时，直接终止并输出诊断信息。</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="step-guardrails" class="panel">
+        <div class="container">
+          <h2>Guardrails：正确地失败，而不是“看起来成功”</h2>
+          <div class="two-col">
+            <div class="card glass">
+              <div class="card-title">失败即信号</div>
+              <div class="card-body">
+                <ul class="bullets">
+                  <li>数据缺失：明确指出缺的字段与时间范围</li>
+                  <li>口径冲突：写出冲突来源，并停止合成结论</li>
+                  <li>风险超标：输出超标原因与最低改动的修复方案</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card glass">
+              <div class="card-title">可审计的“拒答”</div>
+              <div class="card-body">
+                <div class="pill-row">
+                  <div class="pill">No silent fallback</div>
+                  <div class="pill">Evidence-first</div>
+                  <div class="pill">Reproducible</div>
+                </div>
+                <div class="muted">
+                  研究型系统更需要把“不确定”暴露出来：这样评估才有意义，迭代才有方向。
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="risk-strip">
+            <div class="risk-item">
+              <div class="risk-k">输入质量</div>
+              <div class="risk-v">Fail fast</div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-k">推理链路</div>
+              <div class="risk-v">可追溯</div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-k">执行与风控</div>
+              <div class="risk-v">可审计</div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-k">复盘</div>
+              <div class="risk-v">可复现</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="step-demo" class="panel">
+        <div class="container">
+          <h2>微型交互：风险偏好 → 组合建议（示意）</h2>
+          <div class="demo">
+            <div class="demo-left card glass">
+              <div class="card-title">风险偏好</div>
+              <div class="slider-row">
+                <input id="risk" type="range" min="0" max="100" value="42" />
+                <div class="mono" id="riskVal">42</div>
+              </div>
+              <div class="muted small">向右：更进取（更高波动与回撤容忍）。</div>
+              <div class="alloc">
+                <div class="alloc-row">
+                  <div class="alloc-k">Equity</div>
+                  <div class="alloc-bar"><div id="barEq" class="alloc-fill"></div></div>
+                  <div id="valEq" class="alloc-v mono">—</div>
+                </div>
+                <div class="alloc-row">
+                  <div class="alloc-k">Rates</div>
+                  <div class="alloc-bar"><div id="barRt" class="alloc-fill"></div></div>
+                  <div id="valRt" class="alloc-v mono">—</div>
+                </div>
+                <div class="alloc-row">
+                  <div class="alloc-k">Credit</div>
+                  <div class="alloc-bar"><div id="barCr" class="alloc-fill"></div></div>
+                  <div id="valCr" class="alloc-v mono">—</div>
+                </div>
+                <div class="alloc-row">
+                  <div class="alloc-k">Cash</div>
+                  <div class="alloc-bar"><div id="barCa" class="alloc-fill"></div></div>
+                  <div id="valCa" class="alloc-v mono">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="demo-right card glass">
+              <div class="card-title">Agent Trace（节选）</div>
+              <div class="trace">
+                <div class="trace-line">
+                  <div class="dot"></div>
+                  <div>
+                    <div class="trace-k mono">FRAME.SELECT</div>
+                    <div class="trace-v">选择与“利率上行 + 风险偏好”最相关的 frames</div>
+                  </div>
+                </div>
+                <div class="trace-line">
+                  <div class="dot"></div>
+                  <div>
+                    <div class="trace-k mono">EVIDENCE.CHECK</div>
+                    <div class="trace-v">检查口径一致性：利率、通胀、信用利差</div>
+                  </div>
+                </div>
+                <div class="trace-line">
+                  <div class="dot warn"></div>
+                  <div>
+                    <div class="trace-k mono">GUARDRAIL</div>
+                    <div class="trace-v">缺少财报日历 → 输出诊断并阻止生成“确定性”结论</div>
+                  </div>
+                </div>
+                <div class="trace-line">
+                  <div class="dot"></div>
+                  <div>
+                    <div class="trace-k mono">PLAN</div>
+                    <div class="trace-v">给出可执行方案：建议 + 风险预算 + 触发条件</div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <div class="muted small">置信区间示意（非真实回测）：</div>
+                <canvas id="chart" width="820" height="250"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="muted small">
+            录屏视频由 timeline 驱动滚动：每段旁白结束时滚动到下一节，避免“画面没到位，声音已开始”。
+          </div>
+        </div>
+      </section>
+
+      <section id="step-eval" class="panel">
+        <div class="container">
+          <h2>评估：不仅是收益，更是“过程指标”</h2>
+          <div class="metric-grid">
+            <div class="metric card glass">
+              <div class="metric-k">收益/回撤</div>
+              <div class="metric-v mono">Return · MaxDD</div>
+              <div class="muted small">传统指标，必须有，但不够。</div>
+            </div>
+            <div class="metric card glass">
+              <div class="metric-k">证据覆盖率</div>
+              <div class="metric-v mono">Evidence Coverage</div>
+              <div class="muted small">关键变量是否被显式检查与引用。</div>
+            </div>
+            <div class="metric card glass">
+              <div class="metric-k">反事实一致性</div>
+              <div class="metric-v mono">Counterfactual</div>
+              <div class="muted small">删掉/替换证据后，结论是否合理变化。</div>
+            </div>
+            <div class="metric card glass">
+              <div class="metric-k">失败可诊断</div>
+              <div class="metric-v mono">Diagnosability</div>
+              <div class="muted small">失败是否给出可操作的修复路径。</div>
+            </div>
+          </div>
+          <div class="footer">
+            <div class="footer-title">FramePilot</div>
+            <div class="footer-body muted">
+              从 demo 到研究：把“可解释、可复盘、正确失败”作为第一等公民。
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
+

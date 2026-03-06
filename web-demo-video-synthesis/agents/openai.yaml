@@ -1,0 +1,4 @@
+interface:
+  display_name: "Web Demo Video Synthesis"
+  short_description: "Synthesize an auditable web demo video via segmented TTS + timeline-based recording + post-burn subtitles."
+  default_prompt: "Build a reproducible, auditable pipeline: lock narration cues, generate per-segment TTS, compute timeline.json, record a no-caption web demo driven by the timeline, then mux voiceover and burn subtitles into a final MP4."

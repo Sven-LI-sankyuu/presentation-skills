@@ -33,14 +33,14 @@ npm install -g @mermaid-js/mermaid-cli
 ## 5. 本次通过的验证命令
 ```bash
 # 技能结构校验
-python /Users/svenli/.codex/skills/.system/skill-creator/scripts/quick_validate.py \
-  /Users/svenli/FilesOnNut/0ProjectsOnNut/ForProfYuan/FrameBasedInvestment/presentation-skills/ppt-complex-diagram-collab
+python ~/.codex/skills/.system/skill-creator/scripts/quick_validate.py \
+  ppt-complex-diagram-collab
 
 # Fig09 连线校验（示例）
-python /Users/svenli/FilesOnNut/0ProjectsOnNut/ForProfYuan/FrameBasedInvestment/presentation-skills/ppt-complex-diagram-collab/scripts/check_pptx_connectors.py \
-  --pptx /Users/svenli/FilesOnNut/0ProjectsOnNut/ForProfYuan/FrameBasedInvestment/AutoCausePanel/docs/presentation/system_architecture_v0.2/pptx/AutoCausePanel_system_architecture_figures_editable_v0.2.pptx \
+python ppt-complex-diagram-collab/scripts/check_pptx_connectors.py \
+  --pptx /abs/path/to/your_editable_figures.pptx \
   --slide 10 \
-  --json-out /Users/svenli/FilesOnNut/0ProjectsOnNut/ForProfYuan/FrameBasedInvestment/temp/check_pptx_connectors_fig09.json
+  --json-out /tmp/check_pptx_connectors_fig09.json
 ```
 
 ## 6. 维护规则

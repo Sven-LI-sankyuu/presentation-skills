@@ -1,0 +1,317 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FramePilot: A Frame-Driven Financial Agent</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <section id="step-hero" class="panel hero">
+        <div class="container">
+          <div class="badge">Research Demo · Frame-Based Investment Agent</div>
+          <h1>FramePilot: A Frame-Driven Financial Agent</h1>
+          <p class="lead">
+            Not a point forecast machine—an auditable decision system built around <span class="mono">frames</span>.
+          </p>
+          <div class="hero-grid">
+            <div class="card">
+              <div class="card-title">Explainable</div>
+              <div class="card-body">Every conclusion traces back to evidence, definitions, and assumptions.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Reproducible</div>
+              <div class="card-body">Same inputs and the same frame graph yield the same decision path.</div>
+            </div>
+            <div class="card">
+              <div class="card-title">Ablatable</div>
+              <div class="card-body">Frames are modular: swap components and run controlled comparisons.</div>
+            </div>
+          </div>
+          <div class="scroll-hint">Scroll down · Follow the narration</div>
+        </div>
+      </section>
+
+      <section id="step-problem" class="panel">
+        <div class="container">
+          <h2>The Problem: Research Is Multi-Objective</h2>
+          <div class="two-col">
+            <div class="card glass">
+              <div class="card-title">Noisy Inputs</div>
+              <ul class="bullets">
+                <li>Macro series disagree on definitions, lag, and revisions</li>
+                <li>News is a high-noise channel and easily narrative-driven</li>
+                <li>Prices embed expectations; signals often cancel out</li>
+              </ul>
+            </div>
+            <div class="card glass">
+              <div class="card-title">Hard Constraints</div>
+              <ul class="bullets">
+                <li>Return, drawdown, turnover, costs, and constraints coexist</li>
+                <li>Risk is not one number: tails, correlation, liquidity</li>
+                <li>Most importantly: the process must be auditable and repeatable</li>
+              </ul>
+            </div>
+          </div>
+          <div class="callout">
+            <div class="callout-title">What the Agent Optimizes</div>
+            <div class="callout-body">It turns “idea → evidence → decision → risk → postmortem” into a traceable chain.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="step-architecture" class="panel">
+        <div class="container">
+          <h2>Architecture: Three Layers + Audit Logs</h2>
+          <div class="arch">
+            <div class="arch-col">
+              <div class="arch-box">
+                <div class="arch-title">Data Layer</div>
+                <div class="arch-body">
+                  Market · Fundamentals · Macro · Events<br />
+                  <span class="muted">schema alignment + definition tracking + time alignment</span>
+                </div>
+              </div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box">
+                <div class="arch-title">Reasoning Layer (Frames)</div>
+                <div class="arch-body">
+                  Hypotheses · Evidence · Counter-evidence · Constraints<br />
+                  <span class="muted">frame graph + ready for ablations</span>
+                </div>
+              </div>
+              <div class="arch-arrow">→</div>
+              <div class="arch-box">
+                <div class="arch-title">Execution Layer</div>
+                <div class="arch-body">
+                  Portfolio · Trades · Risk gates<br />
+                  <span class="muted">auditable actions + risk budgets</span>
+                </div>
+              </div>
+            </div>
+            <div class="arch-col">
+              <div class="code-card">
+                <div class="code-title">Audit Log (toy)</div>
+                <pre><code class="mono">frame_id: REGIME-2026Q1
+evidence:
+  - rates: "10Y ↑, term premium ↑"
+  - credit: "IG spreads stable"
+constraints:
+  - max_drawdown: 8%
+  - turnover: &lt; 20% / month
+decision:
+  - tilt: "quality + short duration"
+  - hedge: "rate beta neutral"
+fail_fast:
+  - missing: "earnings calendar"</code></pre>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="step-frames" class="panel">
+        <div class="container">
+          <h2>Frames: The Unit of Controlled Comparisons</h2>
+          <div class="frame-grid">
+            <div class="card glass">
+              <div class="card-title">What is a frame?</div>
+              <div class="card-body">
+                A decision card that bundles goals, constraints, regime, and evidence. It is both a reasoning unit and an experiment unit.
+              </div>
+            </div>
+            <div class="card glass">
+              <div class="card-title">Why a graph?</div>
+              <div class="card-body">
+                Evidence is dependent and sometimes conflicting. A frame graph represents dependencies and makes “remove one edge and rerun” ablations easy.
+              </div>
+            </div>
+            <div class="card glass">
+              <div class="card-title">Output is not one sentence</div>
+              <div class="card-body">
+                The output includes recommendations, uncertainty bands, key assumptions, and contingency branches when assumptions break.
+              </div>
+            </div>
+          </div>
+
+          <div class="graph">
+            <div class="graph-title">Frame Graph (toy)</div>
+            <div class="graph-body">
+              <div class="node">Regime</div>
+              <div class="edge"></div>
+              <div class="node">Objective</div>
+              <div class="edge"></div>
+              <div class="node">Evidence</div>
+              <div class="edge"></div>
+              <div class="node">Decision</div>
+              <div class="edge dashed"></div>
+              <div class="node warn">Fail-fast</div>
+            </div>
+            <div class="muted small">Dashed edges represent conditions that should stop the pipeline with a diagnosis.</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="step-guardrails" class="panel">
+        <div class="container">
+          <h2>Guardrails: Fail Correctly, Not Quietly</h2>
+          <div class="two-col">
+            <div class="card glass">
+              <div class="card-title">Failure as Signal</div>
+              <div class="card-body">
+                <ul class="bullets">
+                  <li>Missing data: name the missing fields and time ranges</li>
+                  <li>Conflicting definitions: report sources and stop synthesis</li>
+                  <li>Risk breach: explain why and propose minimal fixes</li>
+                </ul>
+              </div>
+            </div>
+            <div class="card glass">
+              <div class="card-title">Auditable Refusal</div>
+              <div class="card-body">
+                <div class="pill-row">
+                  <div class="pill">No silent fallback</div>
+                  <div class="pill">Evidence-first</div>
+                  <div class="pill">Reproducible</div>
+                </div>
+                <div class="muted">Expose uncertainty explicitly so evaluation and iteration remain meaningful.</div>
+              </div>
+            </div>
+          </div>
+          <div class="risk-strip">
+            <div class="risk-item">
+              <div class="risk-k">Input Quality</div>
+              <div class="risk-v">Fail fast</div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-k">Reasoning Trace</div>
+              <div class="risk-v">Traceable</div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-k">Execution & Risk</div>
+              <div class="risk-v">Auditable</div>
+            </div>
+            <div class="risk-item">
+              <div class="risk-k">Postmortem</div>
+              <div class="risk-v">Reproducible</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="step-demo" class="panel">
+        <div class="container">
+          <h2>Tiny Interaction: Risk Preference → Toy Allocation</h2>
+          <div class="demo">
+            <div class="demo-left card glass">
+              <div class="card-title">Risk Preference</div>
+              <div class="slider-row">
+                <input id="risk" type="range" min="0" max="100" value="42" />
+                <div class="mono" id="riskVal">42</div>
+              </div>
+              <div class="muted small">Move right: more aggressive (higher volatility tolerance).</div>
+              <div class="alloc">
+                <div class="alloc-row">
+                  <div class="alloc-k">Equity</div>
+                  <div class="alloc-bar"><div id="barEq" class="alloc-fill"></div></div>
+                  <div id="valEq" class="alloc-v mono">—</div>
+                </div>
+                <div class="alloc-row">
+                  <div class="alloc-k">Rates</div>
+                  <div class="alloc-bar"><div id="barRt" class="alloc-fill"></div></div>
+                  <div id="valRt" class="alloc-v mono">—</div>
+                </div>
+                <div class="alloc-row">
+                  <div class="alloc-k">Credit</div>
+                  <div class="alloc-bar"><div id="barCr" class="alloc-fill"></div></div>
+                  <div id="valCr" class="alloc-v mono">—</div>
+                </div>
+                <div class="alloc-row">
+                  <div class="alloc-k">Cash</div>
+                  <div class="alloc-bar"><div id="barCa" class="alloc-fill"></div></div>
+                  <div id="valCa" class="alloc-v mono">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="demo-right card glass">
+              <div class="card-title">Agent Trace (excerpt)</div>
+              <div class="trace">
+                <div class="trace-line">
+                  <div class="dot"></div>
+                  <div>
+                    <div class="trace-k mono">FRAME.SELECT</div>
+                    <div class="trace-v">Pick frames most relevant to “rates up + risk preference”</div>
+                  </div>
+                </div>
+                <div class="trace-line">
+                  <div class="dot"></div>
+                  <div>
+                    <div class="trace-k mono">EVIDENCE.CHECK</div>
+                    <div class="trace-v">Validate definitions: rates, inflation, credit spreads</div>
+                  </div>
+                </div>
+                <div class="trace-line">
+                  <div class="dot warn"></div>
+                  <div>
+                    <div class="trace-k mono">GUARDRAIL</div>
+                    <div class="trace-v">Missing earnings calendar → emit diagnosis and stop overconfident synthesis</div>
+                  </div>
+                </div>
+                <div class="trace-line">
+                  <div class="dot"></div>
+                  <div>
+                    <div class="trace-k mono">PLAN</div>
+                    <div class="trace-v">Return an actionable plan: allocation + risk budget + triggers</div>
+                  </div>
+                </div>
+              </div>
+              <div class="chart-wrap">
+                <div class="muted small">Confidence band (toy, not a backtest):</div>
+                <canvas id="chart" width="820" height="250"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="muted small">
+            The recording is timeline-driven: after each segment, the page scrolls to the next section, keeping visuals aligned with the voiceover.
+          </div>
+        </div>
+      </section>
+
+      <section id="step-eval" class="panel">
+        <div class="container">
+          <h2>Evaluation: Returns and Process Metrics</h2>
+          <div class="metric-grid">
+            <div class="metric card glass">
+              <div class="metric-k">Return/Drawdown</div>
+              <div class="metric-v mono">Return · MaxDD</div>
+              <div class="muted small">Necessary, but not sufficient.</div>
+            </div>
+            <div class="metric card glass">
+              <div class="metric-k">Evidence Coverage</div>
+              <div class="metric-v mono">Coverage</div>
+              <div class="muted small">Were key variables explicitly checked and referenced?</div>
+            </div>
+            <div class="metric card glass">
+              <div class="metric-k">Counterfactual Consistency</div>
+              <div class="metric-v mono">Counterfactual</div>
+              <div class="muted small">If you remove evidence, do conclusions change sensibly?</div>
+            </div>
+            <div class="metric card glass">
+              <div class="metric-k">Diagnosability</div>
+              <div class="metric-v mono">Diagnosability</div>
+              <div class="muted small">Do failures come with a precise, actionable diagnosis?</div>
+            </div>
+          </div>
+          <div class="footer">
+            <div class="footer-title">FramePilot</div>
+            <div class="footer-body muted">From demo to research: treat explainability, reproducibility, and correct failure as first-class.</div>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="./app.js"></script>
+  </body>
+</html>
+

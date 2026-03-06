@@ -1,0 +1,43 @@
+flowchart LR
+  subgraph L1["L1 Data Acquisition & Quality"]
+    A1[Market Data Lake]
+    A2[Alternative Data Hub]
+    A3[Corporate Event Parser]
+    A4[Quality & Lineage Gate]
+  end
+
+  subgraph L2["L2 Representation & Signal Factory"]
+    B1[Feature Store]
+    B2[Regime Detector]
+    B3[Factor Engine]
+    B4[Signal Blender]
+    B5[Model Registry]
+  end
+
+  subgraph L3["L3 Portfolio Construction & Risk"]
+    C1[Constraint Compiler]
+    C2[Robust Optimizer]
+    C3[Risk Scenario Lab]
+    C4[Capacity & Cost Model]
+    C5[Compliance Rule Engine]
+  end
+
+  subgraph L4["L4 Execution & Attribution"]
+    D1[Execution Policy Router]
+    D2[Broker Simulator]
+    D3[TCA Monitor]
+    D4[PnL Attribution]
+    D5[Feedback Scheduler]
+  end
+
+  U1[Researcher Workbench]
+  U2[PM Console]
+  U3[Risk Officer Console]
+
+  L1 --> L2
+  L2 --> L3
+  L3 --> L4
+
+  U1 -.supports.-> L2
+  U2 -.drives.-> L3
+  U3 -.governs.-> L3

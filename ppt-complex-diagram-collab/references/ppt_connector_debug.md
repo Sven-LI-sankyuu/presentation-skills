@@ -21,9 +21,14 @@
 ## 回归检查
 - 运行脚本检查：
 ```bash
-python presentation-skills/ppt-complex-diagram-collab/scripts/check_pptx_connectors.py \
+python ppt-complex-diagram-collab/scripts/check_pptx_connectors.py \
   --pptx <path/to/file.pptx> \
   --slide <N> \
-  --forbid-prefix "Lane "
+  --forbid-prefix "Lane " \
+  --min-connectors 1
 ```
 - 人工抽检：至少拖动主图中的 5 个核心节点（含跨泳道连线）。
+
+## 特殊情况：不使用 connector 的分层架构图
+- 如果这张图用“卡片 + 箭头”表达层级递进，没有任何 connector，这是允许的。
+- 建议显式设置 `--min-connectors 0`，并确认输出里 `connectors=0` 且无错误。

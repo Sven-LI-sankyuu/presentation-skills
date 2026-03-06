@@ -1,0 +1,15 @@
+.DS_Store
+
+# Python
+**/__pycache__/
+**/*.pyc
+**/.pytest_cache/
+
+# Node
+**/node_modules/
+
+# Demo artifacts (generated locally)
+demos/**/_output/
+
+# Legacy workspace (not part of published skills)
+old/

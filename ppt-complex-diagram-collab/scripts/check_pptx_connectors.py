@@ -12,6 +12,7 @@
 3. 遍历每条 connector（p:cxnSp），检查是否同时存在 stCxn/endCxn；
 4. 校验连接端点 id 是否存在；
 5. 可选：禁止连接到特定前缀节点（例如 "Lane "）。
+6. 可选：要求最少 connector 数量（防止“本来预期有连线，但实际生成 0 条”）。
 
 失败策略
 ----------
@@ -151,6 +152,12 @@ def parse_args() -> argparse.Namespace:
         help="禁止 connector 连接到此前缀的 shape 文本，可重复",
     )
     parser.add_argument("--json-out", type=Path, help="可选：输出结构化结果到 json 文件")
+    parser.add_argument(
+        "--min-connectors",
+        type=int,
+        default=0,
+        help="可选：要求被检查的 slide 总 connector 数量不少于该值（默认 0）",
+    )
     return parser.parse_args()
 
 
@@ -166,12 +173,14 @@ def main() -> int:
     slide_nums = _slide_numbers(pptx_path, args.slides)
     all_errors: list[str] = []
     all_records: dict[int, list[dict[str, str | None]]] = {}
+    total_connectors = 0
 
     for slide_num in slide_nums:
         root = _read_slide_xml(pptx_path, slide_num)
         shape_text_map = _collect_shape_text(root)
         records = _collect_connectors(root, shape_text_map)
         errors = _validate_records(records, shape_text_map, args.forbid_prefix)
+        total_connectors += len(records)
 
         print(f"[INFO] slide {slide_num}: shapes={len(shape_text_map)} connectors={len(records)} errors={len(errors)}")
 
@@ -197,6 +206,9 @@ def main() -> int:
         args.json_out.parent.mkdir(parents=True, exist_ok=True)
         args.json_out.write_text(json.dumps(all_records, ensure_ascii=False, indent=2), encoding="utf-8")
         print(f"[INFO] 写入 JSON: {args.json_out}")
+
+    if total_connectors < args.min_connectors:
+        all_errors.append(f"connector 总数不足: total={total_connectors} < min={args.min_connectors}")
 
     if all_errors:
         print(f"[FAIL] 检查失败，总错误数: {len(all_errors)}")
