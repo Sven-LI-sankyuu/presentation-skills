@@ -21,7 +21,7 @@
 ## 回归检查
 - 运行脚本检查：
 ```bash
-python ppt-complex-diagram-collab/scripts/check_pptx_connectors.py \
+python scripts/check_pptx_connectors.py \
   --pptx <path/to/file.pptx> \
   --slide <N> \
   --forbid-prefix "Lane " \

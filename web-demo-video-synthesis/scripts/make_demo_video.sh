@@ -13,7 +13,7 @@ CUES_JSON=""
 KEY_JSON=""
 RECORD_URL=""
 WORKSPACE_DIR=""
-VOICE="emily"
+VOICE="auto"
 SAMPLE_RATE="48000"
 INTER_GAP_SEC="2.5"
 SCROLL_LAG_SEC="1.2"
@@ -103,6 +103,7 @@ if ! command -v "$FFMPEG_BIN" >/dev/null 2>&1; then
   exit 1
 fi
 
+mkdir -p "$WORKSPACE_DIR"
 WORKSPACE_DIR="$(cd "$WORKSPACE_DIR" && pwd)"
 mkdir -p "$WORKSPACE_DIR"/{inputs,secrets,segment_audio,timeline,audio,video,subtitles,final} || true
 
@@ -111,6 +112,22 @@ WS_AUDIO="$WORKSPACE_DIR/audio/timeline_audio.mp3"
 WS_VIDEO="$WORKSPACE_DIR/video/video_nocap.webm"
 WS_SRT="$WORKSPACE_DIR/subtitles/captions.srt"
 WS_FINAL="$WORKSPACE_DIR/final/final.mp4"
+
+RECORD_LANG_LOWER="$(printf '%s' "$RECORD_LANG" | tr '[:upper:]' '[:lower:]')"
+RESOLVED_VOICE="$VOICE"
+if [[ "$VOICE" == "auto" ]]; then
+  if [[ "$RECORD_LANG_LOWER" == zh* ]]; then
+    RESOLVED_VOICE="zhida"
+  else
+    RESOLVED_VOICE="emily"
+  fi
+fi
+
+if [[ -z "$RESOLVED_VOICE" ]]; then
+  echo "--voice 不能为空" >&2
+  exit 1
+fi
+echo "TTS voice: $RESOLVED_VOICE (input=$VOICE, record_lang=$RECORD_LANG)"
 
 # 若 workspace 缺少核心文件，则必须执行一次 TTS+timeline 生成并 promote 进 workspace。
 if [[ ! -f "$WS_TIMELINE" || ! -d "$WORKSPACE_DIR/segment_audio" || -z "$(ls -A "$WORKSPACE_DIR/segment_audio" 2>/dev/null || true)" ]]; then
@@ -124,7 +141,7 @@ if [[ ! -f "$WS_TIMELINE" || ! -d "$WORKSPACE_DIR/segment_audio" || -z "$(ls -A 
     --workspace-dir "$WORKSPACE_DIR" \
     --cues-json "$CUES_JSON" \
     --key-json "$KEY_JSON" \
-    --voice "$VOICE" \
+    --voice "$RESOLVED_VOICE" \
     --sample-rate "$SAMPLE_RATE" \
     --format "wav" \
     --inter-gap-sec "$INTER_GAP_SEC" \

@@ -116,4 +116,4 @@
 2. 如果确实暂时拿不到，可以显式使用本地替代（例如 macOS `say`）先把录屏/字幕/合成跑通。
 
 示例（macOS）：
-- `python3 skills/web-demo-video-synthesis/scripts/tts_build_workspace_macos_say.py --workspace-dir ... --cues-json ...`
+- `python3 scripts/tts_build_workspace_macos_say.py --workspace-dir ... --cues-json ...`

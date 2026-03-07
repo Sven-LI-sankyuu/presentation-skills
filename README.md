@@ -75,7 +75,18 @@ Demo（中文/英文各一套网页与文案）：`demos/web-demo-video-synthesi
 - PPT 可编辑复杂图：`demos/ppt-complex-diagram-collab-stock-architecture/`
 - 网页 demo 合成视频：`demos/web-demo-video-synthesis-financial-agent/`
 
-注意：`demos/**/_output/` 是本地生成的视频产物，默认不会提交到 git（见 `.gitignore`）。
+注意：仓库默认忽略大媒体文件（`*.mp3` / `*.mp4`），避免推送体积失控（见 `.gitignore`）。
+
+### `ppt-complex-diagram-collab` 展示
+
+下图是该 skill 产出的“分层架构图风格”示例（可编辑 PPT）：
+
+[![ppt-complex-diagram-collab preview](assets/ppt-complex-diagram-collab_demo.jpg)](demos/ppt-complex-diagram-collab-stock-architecture/README.md)
+
+这个 skill 主要解决：
+- 复杂系统图从“讨论版（mermaid）”到“交付版（editable pptx）”的一致性。
+- connector 粘连校验，避免拖动节点后连线飘散或粘错对象。
+- 图集规划、视觉语法和边预算（edge budget）可复用。
 
 ### Web Demo Video Synthesis 预览
 
@@ -83,6 +94,5 @@ Demo（中文/英文各一套网页与文案）：`demos/web-demo-video-synthesi
 
 [![web-demo-video-synthesis demo preview (EN)](demos/web-demo-video-synthesis-financial-agent/assets/preview_en.png)](demos/web-demo-video-synthesis-financial-agent/README.md)
 
-中文版截图（点击进入 demo 说明）：
-
-[![web-demo-video-synthesis demo preview (ZH)](demos/web-demo-video-synthesis-financial-agent/assets/preview_zh.png)](demos/web-demo-video-synthesis-financial-agent/README.md)
+视频 Demo（英文版）：
+- Bilibili: https://www.bilibili.com/video/BV1j6NwzaEDZ/

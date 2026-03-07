@@ -8,26 +8,9 @@
 # Node
 **/node_modules/
 
-# Demo artifacts (generated locally)
-demos/**/_output/
-
-# Workspace cache (generated locally)
-temp/
-
 # Large media artifacts (never commit)
-*.mp4
-*.webm
-*.mov
-*.mkv
-*.wav
 *.mp3
-*.m4a
-*.aac
+*.mp4
 
-# Common generated output dirs
-**/_output/
-**/_raw_record/
-**/web_demo_video_ws/
-
-# Legacy workspace (not part of published skills)
-old/
+# Local run workspace
+temp/

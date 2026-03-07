@@ -9,6 +9,10 @@ description: Use when collaborating with humans to produce publication-grade com
 把“业务讲清楚 + 图可复用 + 论文可交付”作为同一个任务完成。
 优先交付图包（planning + mermaid + editable PPT + 校验结果），不要只交单张图。
 
+## 执行目录约定
+- 以下命令默认在 `ppt-complex-diagram-collab/` 目录内执行（即本 `SKILL.md` 同级目录）。
+- 若你从其他目录执行，请自行补齐前缀路径。
+
 ## 工作流
 按下面顺序执行，避免返工。
 
@@ -75,7 +79,7 @@ description: Use when collaborating with humans to produce publication-grade com
 python <diagram_dir>/build_editable_pptx.py
 
 # 2) 校验连线是否真绑定
-python ppt-complex-diagram-collab/scripts/check_pptx_connectors.py \
+python scripts/check_pptx_connectors.py \
   --pptx <diagram_dir>/pptx/<name>.pptx \
   --slide 10 \
   --forbid-prefix "Lane " \

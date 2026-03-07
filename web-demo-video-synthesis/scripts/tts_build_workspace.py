@@ -2,7 +2,7 @@
 """在 workspace 中生成分段音频 + timeline.json（主键），并可选混出总音轨。
 
 定位（workspace 协作范式）：
-- 让 `skills/web-demo-video-synthesis` 可以独立发布：不依赖仓库其他目录。
+- 让 `web-demo-video-synthesis` 可以独立发布：不依赖仓库其他目录。
 - 人类与 Codex 共同维护 workspace 文件；该脚本只负责“把 cues + key 变成可审计产物”。
 
 产物（默认写到 workspace）：

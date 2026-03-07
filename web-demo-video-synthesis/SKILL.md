@@ -34,6 +34,10 @@ npm install playwright
 npx playwright install chromium
 ```
 
+执行目录约定：
+- 以下命令默认在 `web-demo-video-synthesis/` 目录内执行（即本 `SKILL.md` 同级目录）。
+- 若你从其他目录执行，请自行加上前缀路径。
+
 ## 向人类索要的密钥/Token（必须明确）
 
 该流程可能需要人类提供以下敏感信息（不应提交到代码仓库）：
@@ -123,7 +127,7 @@ npx playwright install chromium
 当你暂时拿不到任何 TTS API 的秘钥/Token，但仍希望先把“网页录屏/字幕/合成”跑通，可以显式改用 macOS `say`：
 
 ```bash
-python3 skills/web-demo-video-synthesis/scripts/tts_build_workspace_macos_say.py \
+python3 scripts/tts_build_workspace_macos_say.py \
   --workspace-dir temp/web_demo_video_ws/demo01 \
   --cues-json temp/web_demo_video_ws/demo01/inputs/cues.json \
   --voice Tingting \
@@ -140,7 +144,7 @@ python3 skills/web-demo-video-synthesis/scripts/tts_build_workspace_macos_say.py
   - macOS `say` 的 voice（例如 `Tingting`/`Samantha`）用 `say -v '?'` 查询。
 
 3. 基于 timeline 二次录屏（无字幕）
-- 使用 `skills/web-demo-video-synthesis/scripts/record_demo_from_timeline.mjs --no-captions true`。
+- 使用 `scripts/record_demo_from_timeline.mjs --no-captions true`。
 - 产物：`video_from_timeline_nocap.webm`。
 
 4. timeline -> 字幕文件
@@ -153,7 +157,7 @@ python3 skills/web-demo-video-synthesis/scripts/tts_build_workspace_macos_say.py
 ## 一键执行（仍可用，但不强制）
 
 ```bash
-bash skills/web-demo-video-synthesis/scripts/make_demo_video.sh \
+bash scripts/make_demo_video.sh \
   --cues-json PATH/TO/cues.json \
   --key-json PATH/TO/key.json \
   --record-url http://127.0.0.1:6150/demo \
@@ -167,12 +171,17 @@ bash skills/web-demo-video-synthesis/scripts/make_demo_video.sh \
   --subtitle-margin-v 24
 ```
 
+`--voice auto` 规则：
+- `--record-lang en*` -> `emily`
+- `--record-lang zh*` -> `zhida`
+- 其他语言默认回退到 `emily`
+
 ## 常用局部命令（只重跑某一步）
 
 分段TTS + timeline（直接写 workspace，可迭代；默认防止静默复用旧音频）：
 
 ```bash
-python3 skills/web-demo-video-synthesis/scripts/tts_build_workspace.py \
+python3 scripts/tts_build_workspace.py \
   --workspace-dir temp/web_demo_video_ws/demo01 \
   --cues-json temp/web_demo_video_ws/demo01/inputs/cues.json \
   --key-json temp/web_demo_video_ws/demo01/secrets/key.json \
@@ -185,7 +194,7 @@ python3 skills/web-demo-video-synthesis/scripts/tts_build_workspace.py \
 改了 timeline 后重混音：
 
 ```bash
-python3 skills/web-demo-video-synthesis/scripts/mix_audio_from_timeline.py \
+python3 scripts/mix_audio_from_timeline.py \
   --timeline temp/web_demo_video_ws/demo01/timeline/timeline.json \
   --output temp/web_demo_video_ws/demo01/audio/timeline_audio.mp3
 ```
@@ -193,7 +202,7 @@ python3 skills/web-demo-video-synthesis/scripts/mix_audio_from_timeline.py \
 按 timeline 录无字幕母带：
 
 ```bash
-node skills/web-demo-video-synthesis/scripts/record_demo_from_timeline.mjs \
+node scripts/record_demo_from_timeline.mjs \
   --url http://127.0.0.1:6150/demo \
   --timeline-json temp/web_demo_video_ws/demo01/timeline/timeline.json \
   --out temp/web_demo_video_ws/demo01/video/video_nocap.webm \
@@ -218,7 +227,7 @@ node skills/web-demo-video-synthesis/scripts/record_demo_from_timeline.mjs \
 timeline -> SRT：
 
 ```bash
-python3 skills/web-demo-video-synthesis/scripts/build_srt_from_timeline.py \
+python3 scripts/build_srt_from_timeline.py \
   --timeline temp/web_demo_video_ws/demo01/timeline/timeline.json \
   --output temp/web_demo_video_ws/demo01/subtitles/captions.srt
 ```
