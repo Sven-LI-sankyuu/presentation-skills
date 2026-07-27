@@ -12,11 +12,13 @@
           while keeping page narrative, Chinese typography, native Office tables / charts, and QC in one workflow.
         </p>
         <p style="margin: 0 0 12px;">
-          <img src="https://img.shields.io/badge/PPTX-editable-2ea44f?style=flat-square" alt="editable PPTX" />
-          <img src="https://img.shields.io/badge/DOCX-formal-2b579a?style=flat-square" alt="formal DOCX" />
-          <img src="https://img.shields.io/badge/charts-Office%20native-d2492a?style=flat-square" alt="Office-native charts" />
-          <img src="https://img.shields.io/badge/QC-Chinese%20typography-6f42c1?style=flat-square" alt="Chinese typography QC" />
-          <img src="https://img.shields.io/badge/render-review-brightgreen?style=flat-square" alt="render review" />
+          <a href="https://github.com/Sven-LI-sankyuu/presentation-skills/releases/latest">
+            <img src="https://img.shields.io/badge/release-skill%20zips-2ea44f?style=flat-square" alt="skill zip releases" />
+          </a>
+          <img src="https://img.shields.io/badge/skills-4%20packaged-2b579a?style=flat-square" alt="4 packaged skills" />
+          <img src="https://img.shields.io/badge/output-editable%20Office-d2492a?style=flat-square" alt="editable Office output" />
+          <img src="https://img.shields.io/badge/QC-table%20%2B%20typography-6f42c1?style=flat-square" alt="table and typography QC" />
+          <img src="https://img.shields.io/badge/review-render%20preview-brightgreen?style=flat-square" alt="render preview review" />
         </p>
         <p style="margin: 0;">
           <a href="README.zh.md">🇨🇳 中文 README</a>
@@ -47,11 +49,9 @@
   </tr>
 </table>
 
-`presentation-skills` is an open-source presentation-skill repository for agent / assistant environments, focused on real meetings, reviews, briefings, and external deliverables. The practical outcome is cleaner PPTs, more readable text, charts and tables that feel like formal Office files, deliverables that remain editable, and fewer rounds of rework after handoff.
+## Product Logic: Constrain Model Output with Real Office Experience
 
-> Extensive rework and testing: these skills have gone through many real tasks, repeated iteration, failure analysis, output review, and workflow rewrites. They are qualitatively different from skills casually written by Codex / Claude Code in a single pass.
-
-> Pre-delivery quality checks: text boundaries, font-size systems, vertical centering in tables, special table indentation, full-slide screenshot backgrounds, and preview boundary risks are all checked and surfaced.
+As model capability improves, models will become increasingly fluent at using code tools to operate carriers such as PPT and Word directly. But PPT, Word, and even web video recording are more of a product problem. Improvements in model reasoning and coding ability do not naturally make models understand human office needs for PPT, such as specific typography information like fonts and line spacing, and more detailed text-writing logic and standards. The main creator of this skill has work experience in institutions such as large securities firms and private investment funds, and has solidified these experiences and logic into specifications and quality checks, so as to constrain models to produce PPT, Word, and video deliverables that better match real work needs. This is the core value of this skill.
 
 | Skill | Best For | Demo Signal |
 | --- | --- | --- |

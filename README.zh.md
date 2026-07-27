@@ -11,11 +11,13 @@
           生成可编辑 PowerPoint、正式 Word 文档与可发布 demo 视频，<br>并把页面叙事、中文排版、原生表格 / 图表和质量检查放进同一条工作流。
         </p>
         <p style="margin: 0 0 12px;">
-          <img src="https://img.shields.io/badge/PPTX-editable-2ea44f?style=flat-square" alt="editable PPTX" />
-          <img src="https://img.shields.io/badge/DOCX-formal-2b579a?style=flat-square" alt="formal DOCX" />
-          <img src="https://img.shields.io/badge/charts-Office%20native-d2492a?style=flat-square" alt="Office-native charts" />
-          <img src="https://img.shields.io/badge/QC-Chinese%20typography-6f42c1?style=flat-square" alt="Chinese typography QC" />
-          <img src="https://img.shields.io/badge/render-review-brightgreen?style=flat-square" alt="render review" />
+          <a href="https://github.com/Sven-LI-sankyuu/presentation-skills/releases/latest">
+            <img src="https://img.shields.io/badge/release-skill%20zips-2ea44f?style=flat-square" alt="skill zip releases" />
+          </a>
+          <img src="https://img.shields.io/badge/skills-4%20packaged-2b579a?style=flat-square" alt="4 packaged skills" />
+          <img src="https://img.shields.io/badge/output-editable%20Office-d2492a?style=flat-square" alt="editable Office output" />
+          <img src="https://img.shields.io/badge/QC-table%20%2B%20typography-6f42c1?style=flat-square" alt="table and typography QC" />
+          <img src="https://img.shields.io/badge/review-render%20preview-brightgreen?style=flat-square" alt="render preview review" />
         </p>
         <p style="margin: 0;">
           <a href="README.md">🇬🇧 English README</a>
@@ -47,11 +49,9 @@
 </table>
 
 
-`presentation-skills` 是一个面向 agent / assistant 环境的开源 presentation 工具仓库，重点服务真实会议、评审、汇报和外发材料。这里关注的结果是：PPT 更整齐、文字更可读、图表和表格更像正式 Office 文件、交付后还能继续编辑，后续返工次数更少。
+## 产品逻辑：用真实办公经验约束模型输出
 
-> 大量返工与测试：经过了大量真实任务中的反复迭代、失败分析、产物复核和工作流重写。与让 Codex / Claude Code 随手编写的 skill 有质的区别。
-
-> 交付前的质量检查：文本边界、字号系统、表格上下居中、表格特殊缩进、整页截图背景、预览图边界风险都会进入检查和提醒。
+模型能力的提升会让模型在直接使用代码工具操作ppt和word等载体的时候越来越得心应手, 但是PPT, word, 乃至网页视频录制, 更多的是一个产品问题. 模型的推理能力和代码能力的提高并不会让他们自然地掌握人类在办公中的PPT需求, 例如特定的字体和行距等排版信息, 和更细致的文本写作逻辑规范等. 本skill的主创有在大型券商和私募投资基金等机构的工作经验, 将这些经验和逻辑, 以规范和质检的形式固化, 以约束模型产生更符合实际工作需求的PPT, word和视频交付物. 这就是这个skill的核心价值.
 
 | Skill | 适合场景 | Demo 亮点 |
 | --- | --- | --- |
