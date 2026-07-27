@@ -3,7 +3,7 @@
 
 定位与作用
 ----------
-这个脚本把字体槽位、字号提醒、段落契约、表格对齐、caption 顺序、section 栏数和
+这个脚本把字体槽位、字号与表格缩进提醒、段落契约、表格对齐、caption 顺序、section 栏数和
 `asset_manifest` 一致性收敛成一个可追溯的 QA bundle。它不替代人工视觉判断，
 但能把那些本应脚本检查的问题尽量在交付前锁死。
 """
@@ -91,9 +91,13 @@ def main() -> int:
     print(f"[INFO] agent_reminder_json={agent_json_out}")
     print(f"[INFO] agent_reminder_markdown={agent_md_out}")
     print(f"[INFO] agent_reminder_decision={reminder['decision']['state']}")
-    print(f"[INFO] font_size_warnings={report['advisory_summary']['warning']}")
+    warning_count = report["advisory_summary"]["warning"]
+    print(f"[INFO] advisory_warnings={warning_count}")
 
     if report["passed_all_checks"]:
+        if warning_count:
+            print(f"[WARN] DOCX QA 硬检查通过，但有 {warning_count} 个默认契约 warning；请修复或记录保留理由")
+            return 0
         print("[OK] DOCX QA 全部通过")
         return 0
 

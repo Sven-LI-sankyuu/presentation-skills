@@ -72,6 +72,8 @@
 
 **表格排版属于 typography policy。** 中文任务的原生表格默认使用五号约 `10.5pt`、单倍行距、段前段后 `0`、无特殊缩进、单元格上下居中；表头居中，index / 类目列居左，文本列居左，财务数值列靠右。图表下方的数据表、附录表和正文里的明细表都应复用同一套 table policy。
 
+**表格 warning 是默认执行纪律。** `structure_precheck` 对表格单元格未上下居中、段落存在 `level` / `marL` / `marR` / `indent` 特殊缩进输出 warning。warning 不阻断 final，但 agent 默认要修复；外部模板有明确规则，或某个单元格承载大段连续文本并需要首行缩进时，可以记录例外后保留。
+
 **研报型 deck 是 domain profile。** 财报点评、行业研究、卖方研报和正式研究材料可以启用 `domain_profile: financial_report_review` 或同类 profile。它在 `typography_profile: zh_formal` 与 table policy 之上增加页眉页脚、图号、单位、来源、免责声明、低饱和配色和稳定版心等视觉纪律。
 
 **设计感可以叠加在研报型 deck 上。** `domain_profile: financial_report_review` 不要求页面只能采用传统券商版式。它要求来源、单位、免责声明、版心、表格和读图结构可追责；在这些纪律成立的前提下，`visual_profile: editorial_ink` 或 `swiss_modernist` 可以提供更强的标题、节奏、图形语言和页面记忆点。

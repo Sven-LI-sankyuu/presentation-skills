@@ -30,6 +30,10 @@
 
 **表格字体要独立设置。** Word 表格里的 run 很容易沿用正文默认值，因此表格正文和表头必须单独落 `10.5pt` 或 `9pt`。
 
+**表格段落缩进要显式归零。** 构建器应对单元格内每个段落显式设置 `first_line_indent=0`、`left_indent=0` 和 `right_indent=0`；负的 `first_line_indent` 代表悬挂缩进，同样属于默认应归零的特殊缩进。Word 还可能用 `w:firstLineChars="200"` 表达首行缩进 `2` 字符，因此构建器与 QA 必须同时处理 point 属性和 `firstLineChars`、`hangingChars`、`leftChars`、`rightChars` 字符单位属性，并沿段落样式继承链解析有效值。
+
+**表格单元格要显式上下居中。** 构建器应在 cell 级设置 `vertical_alignment=center`，QA 对缺省、靠上、靠下等偏离输出 warning。这个属性与 paragraph 级水平对齐互不替代。
+
 **正文首行缩进要独立设置。** 中文正式文档正文默认应有 `2` 字符首行缩进，但标题、表题、图题、表注、列表和表格正文都不应机械继承这条规则。
 
 **表格对齐要按列角色设置。** 表头、左侧索引列、普通文本列和数值列不应使用同一种对齐策略。构建器至少要能稳定落地“表头居中、索引左对齐、数值右对齐”。
@@ -50,4 +54,4 @@
 
 **Caption 和 block role 应语义化。** 推荐在 Markdown parsing 后先得到 `block_role`，再决定 Word 样式，而不是边遍历边临时判断。编号题注样式、相对位置和 active `caption_policy` 应成为正式识别条件。
 
-**文档级验证应脚本化。** 当前 `run_docx_qa.py` 已覆盖字体槽位、段落契约、表格字号与对齐、caption 顺序、section 和资产声明，并对非半点字号、role/profile 漂移和字号碎片化输出聚合 advisory。图片裁切与复杂原生对象仍需结合 preview 和人工 visual review，不能只依赖“脚本没报错”。
+**文档级验证应脚本化。** 当前 `run_docx_qa.py` 已覆盖字体槽位、段落契约、表格字号与水平对齐、表格缩进、单元格垂直对齐、caption 顺序、section 和资产声明，并对字号及表格默认契约偏离输出聚合 advisory。图片裁切与复杂原生对象仍需结合 preview 和人工 visual review，不能只依赖“脚本没报错”。

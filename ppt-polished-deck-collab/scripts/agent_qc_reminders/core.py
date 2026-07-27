@@ -121,6 +121,8 @@ TAXONOMY_CATALOG: dict[str, TaxonomyEntry] = {
     "qa_check_failed.section_contract": TaxonomyEntry("layout", "section", "layout.section.contract_drift", "Word section 栏数契约不一致。", "repair_section_contract"),
     "qa_check_failed.asset_manifest_integrity": TaxonomyEntry("source_integrity", "asset_manifest", "source_integrity.asset_manifest.invalid", "Word 资产 manifest QA 未通过。", "repair_asset_manifest"),
     "qa_check_failed.visual_review_status": TaxonomyEntry("validation_coverage", "visual_review", "validation_coverage.gate.visual_review_missing", "Word visual review 证据缺失或无效。", "complete_visual_review"),
+    "table_paragraph_special_indent": TaxonomyEntry("typography", "table_indent", "typography.table.indent_review", "PPT 表格单元格段落存在非零特殊缩进。", "review_table_indent"),
+    "table_cell_vertical_alignment_not_centered": TaxonomyEntry("typography", "table_alignment", "typography.table.vertical_alignment_review", "PPT 表格单元格内容未上下居中。", "repair_table_vertical_alignment"),
     "font_size_policy_off_half_point_grid": TaxonomyEntry("typography", "font_size", "typography.font_size.profile_token_off_grid", "Active profile 自身包含非半点字号 token。", "repair_font_size_token"),
     "font_size_source_literal_off_half_point_grid": TaxonomyEntry("typography", "font_size", "typography.font_size.off_grid", "构建源或配置中手填了偏离 0.5pt 网格的字号。", "repair_font_size_token"),
     "font_size_source_literal_role_drift": TaxonomyEntry("typography", "font_size", "typography.font_size.role_drift", "构建源或配置中的字号偏离 active role token。", "repair_font_size_token"),
@@ -184,6 +186,8 @@ POLICY_CATALOG: dict[str, PolicyEntry] = {
     "content_structure.sequence.block_mismatch": PolicyEntry("hard_block", "build", "rerun_clear", ("edit_source", "rebuild", "rerun"), ("rerun_clear",)),
     "typography.paragraph.style_contract_drift": PolicyEntry("hard_block", "final", "rerun_clear", ("edit_source", "rebuild", "rerun"), ("rerun_clear",)),
     "typography.font_slot.integrity": PolicyEntry("hard_block", "final", "rerun_clear", ("edit_source", "rebuild", "rerun"), ("rerun_clear",)),
+    "typography.table.indent_review": PolicyEntry("advisory", None, "document_or_fix", ("edit_source", "document_exception"), ("documented_or_fixed",)),
+    "typography.table.vertical_alignment_review": PolicyEntry("advisory", None, "document_or_fix", ("edit_source", "document_exception"), ("documented_or_fixed",)),
     "typography.font_size.profile_token_off_grid": PolicyEntry("advisory", None, "document_or_fix", ("edit_profile", "document_exception"), ("documented_or_fixed",)),
     "typography.font_size.off_grid": PolicyEntry("advisory", None, "document_or_fix", ("edit_source", "document_exception"), ("documented_or_fixed",)),
     "typography.font_size.role_drift": PolicyEntry("advisory", None, "document_or_fix", ("edit_source", "document_exception"), ("documented_or_fixed",)),
@@ -921,12 +925,17 @@ def ppt_location(issue: dict[str, Any]) -> dict[str, Any]:
     """把 PPT issue 转成统一 location。"""
 
     location = {"kind": "ppt"}
+    details = issue.get("details") or {}
     if issue.get("slide_number") is not None:
         location["slide"] = issue["slide_number"]
     if issue.get("shape_id") is not None:
         location["shape_id"] = issue["shape_id"]
     if issue.get("source_kind") is not None:
         location["source_kind"] = issue["source_kind"]
+    if issue.get("source_kind") in {"table_cell", "table_paragraph"}:
+        for key in ("table_index_on_slide", "row", "col", "paragraph"):
+            if details.get(key) is not None:
+                location[key] = details[key]
     return location
 
 
@@ -1109,6 +1118,12 @@ def format_location(location: dict[str, Any]) -> str:
             parts.append(f"slide {location['slide']}")
         if location.get("shape_id") is not None:
             parts.append(f"shape {location['shape_id']}")
+        if location.get("table_index_on_slide") is not None:
+            parts.append(f"table {location['table_index_on_slide']}")
+        if location.get("row") is not None and location.get("col") is not None:
+            parts.append(f"row {location['row']} col {location['col']}")
+        if location.get("paragraph") is not None:
+            parts.append(f"paragraph {location['paragraph']}")
         if location.get("source_kind"):
             parts.append(str(location["source_kind"]))
         return " | ".join(parts) or "ppt"

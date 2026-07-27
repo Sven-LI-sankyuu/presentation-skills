@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none">
+    <defs>
+      <linearGradient id="arcGrad1" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stop-color="#C8904E" stop-opacity="0.9"/>
+        <stop offset="100%" stop-color="#E8C880" stop-opacity="0.55"/>
+      </linearGradient>
+      <linearGradient id="arcGrad2" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stop-color="#C8904E" stop-opacity="0.65"/>
+        <stop offset="100%" stop-color="#E8C880" stop-opacity="0.25"/>
+      </linearGradient>
+      <linearGradient id="arcGrad3" x1="0" y1="1" x2="0" y2="0">
+        <stop offset="0%" stop-color="#C8904E" stop-opacity="0.35"/>
+        <stop offset="100%" stop-color="#E8C880" stop-opacity="0.08"/>
+      </linearGradient>
+      <linearGradient id="podiumGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#2B3A67"/>
+        <stop offset="100%" stop-color="#1A2744"/>
+      </linearGradient>
+    </defs>
+
+    <!-- 讲台（梯形） -->
+    <path d="M130 320 L270 320 L300 370 L100 370 Z" fill="url(#podiumGrad)" rx="2"/>
+    <!-- 讲台顶面微妙的亮边 -->
+    <line x1="134" y1="320" x2="266" y2="320" stroke="#3D5A80" stroke-width="1.2" opacity="0.5"/>
+
+    <!-- 弧线1（最内层） -->
+    <path d="M170 318 C170 180, 230 180, 230 318" stroke="url(#arcGrad1)" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+    <!-- 弧线2（中层） -->
+    <path d="M140 318 C140 130, 260 130, 260 318" stroke="url(#arcGrad2)" stroke-width="3" fill="none" stroke-linecap="round"/>
+    <!-- 弧线3（最外层） -->
+    <path d="M110 318 C110 80, 290 80, 290 318" stroke="url(#arcGrad3)" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- 弧线顶部的光点 -->
+    <circle cx="200" cy="190" r="5.5" fill="#C8904E" opacity="0.85"/>
+    <circle cx="200" cy="142" r="4" fill="#D4A860" opacity="0.55"/>
+    <circle cx="200" cy="96" r="3" fill="#E0B870" opacity="0.3"/>
+
+    <!-- 讲台上的微小光点 -->
+    <circle cx="200" cy="318" r="3" fill="#E8C880" opacity="0.7"/>
+
+    <!-- 左右微小的星点装饰 -->
+    <circle cx="148" cy="160" r="1.8" fill="#D4A860" opacity="0.35"/>
+    <circle cx="252" cy="150" r="1.8" fill="#D4A860" opacity="0.35"/>
+    <circle cx="168" cy="110" r="1.5" fill="#D4A860" opacity="0.25"/>
+    <circle cx="232" cy="105" r="1.5" fill="#D4A860" opacity="0.25"/>
+  </svg>

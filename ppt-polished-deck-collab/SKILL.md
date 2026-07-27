@@ -106,6 +106,7 @@ description: Use when collaborating with humans to produce polished, editable, h
 - 所有 deck 在 `build` 之后都应先跑 `package_preflight`，检查包结构一致性、移动端兼容风险和外发安全信号。
 - 所有 deck 在 `package_preflight` 之后都应再跑 `structure_precheck`，检查文本框 fit、文字遮挡、结构化对象排版边界和字号系统漂移。
 - 字号提醒默认不阻断交付：`10.5pt` 这类半点档位是规范档位；source/config 层或 PPTX 产物层出现 `9.6pt`、`11.3pt` 这类偏离 `0.5pt` 网格的显式字号、低于 active typography token 的文字和过多碎片化字号应进入 warning。能解析 active role 时，reminder 必须提示默认 token，例如中文正文回 `theme_tokens.body_font_pt=12pt`、中文表格回 `theme_tokens.table_font_pt=10.5pt`。模板确有特殊字号时允许保留，但必须在 review note 说明。
+- 表格格式提醒默认也不阻断交付，但 agent 应按默认规范先修复：单元格内容应 `vertical_anchor=middle`，表格单元格段落应无 `level`、`marL`、`marR`、`indent` 等特殊缩进。只有外部模板有明确表格规则，或某个单元格确实承载大段连续文本并需要首行缩进时，才保留并在 review note 说明。
 - 字号 observation 默认是 advisory；如果同一页面同时存在文本越界、遮挡、包结构错误、必检 evidence 缺失等 finding，对应问题仍按 policy 独立 hard/soft block。Agent 应先处理 block，再处理或说明字号 advisory。
 - `package_preflight`、`structure_precheck` 和 `render_review` 会在原 JSON / Markdown 报告旁生成 `.agent_reminder.json` 与 `.agent_reminder.md`。Agent 必须先读 reminder 的 `decision`、`groups`、`suggested_fix`、`sample_locations` 和 `full_report_ref`，只有需要完整证据时再打开 full report。
 - `not_checked` 必须显式写入报告，不能当成“通过”。

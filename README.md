@@ -1,8 +1,57 @@
-# presentation-skills
+<div align="center">
+  <table>
+    <tr>
+      <td style="vertical-align: middle;">
+        <img src="assets/presentation-skills-logo.svg" alt="presentation-skills logo" width="120" />
+      </td>
+      <td align="left" style="padding-left: 24px;">
+        <h1 style="margin: 0 0 8px;">presentation-skills</h1>
+        <p style="margin: 0 0 12px;">
+          <strong>Agent presentation skills for real office delivery</strong><br/>
+          Generate editable PowerPoint decks, formal Word documents, and publishable demo videos,<br/>
+          while keeping page narrative, Chinese typography, native Office tables / charts, and QC in one workflow.
+        </p>
+        <p style="margin: 0 0 12px;">
+          <img src="https://img.shields.io/badge/PPTX-editable-2ea44f?style=flat-square" alt="editable PPTX" />
+          <img src="https://img.shields.io/badge/DOCX-formal-2b579a?style=flat-square" alt="formal DOCX" />
+          <img src="https://img.shields.io/badge/charts-Office%20native-d2492a?style=flat-square" alt="Office-native charts" />
+          <img src="https://img.shields.io/badge/QC-Chinese%20typography-6f42c1?style=flat-square" alt="Chinese typography QC" />
+          <img src="https://img.shields.io/badge/render-review-brightgreen?style=flat-square" alt="render review" />
+        </p>
+        <p style="margin: 0;">
+          <a href="README.zh.md">🇨🇳 中文 README</a>
+        </p>
+      </td>
+    </tr>
+  </table>
+</div>
 
-[中文版说明](README.zh.md)
+<table>
+  <tr>
+    <td width="25%">
+      <strong>📋 Close to real office scenarios</strong><br/>
+      Covers research reports, management briefings, technical proposals, defenses, product demos, keynote-style talks, and template-driven business materials, with separate handling for reading decks and speaking decks.
+    </td>
+    <td width="25%">
+      <strong>✏️ Keeps Office editability</strong><br/>
+      Prioritizes native PowerPoint / Word text, shapes, tables, charts, and necessary connectors, so teams can revise copy, numbers, and layouts after handoff.
+    </td>
+    <td width="25%">
+      <strong>📄 Formal Chinese typography details</strong><br/>
+      Supports Songti / Heiti, Times New Roman, 小四 body text, 1.5x line spacing, 0.5-line before / after paragraph spacing, 五号 table text, and right-aligned financial numbers.
+    </td>
+    <td width="25%">
+      <strong>🔍 QC reduces rework</strong><br/>
+      Checks text overflow, object overlap, font-size drift, vertical centering in tables, special table indentation, full-slide screenshot backgrounds, and preview boundary risks.
+    </td>
+  </tr>
+</table>
 
-**TL;DR.** `presentation-skills` is a collection of production-grade skills for making the artifacts people actually hand over: editable PowerPoint decks, formal Word documents, and publishable demo videos. The flagship skill is `ppt-polished-deck-collab`, which builds editable, validated PowerPoint decks across research reports, executive narratives, technical explainers, keynote-style talks, and template-driven business decks.
+`presentation-skills` is an open-source presentation-skill repository for agent / assistant environments, focused on real meetings, reviews, briefings, and external deliverables. The practical outcome is cleaner PPTs, more readable text, charts and tables that feel like formal Office files, deliverables that remain editable, and fewer rounds of rework after handoff.
+
+> Extensive rework and testing: these skills have gone through many real tasks, repeated iteration, failure analysis, output review, and workflow rewrites. They are qualitatively different from skills casually written by Codex / Claude Code in a single pass.
+
+> Pre-delivery quality checks: text boundaries, font-size systems, vertical centering in tables, special table indentation, full-slide screenshot backgrounds, and preview boundary risks are all checked and surfaced.
 
 | Skill | Best For | Demo Signal |
 | --- | --- | --- |
@@ -11,19 +60,15 @@
 | `web-demo-video-synthesis` | Product walkthroughs, narrated web demos, short-form explainers, publishable demo videos | End-to-end webpage, voiceover, subtitles, screen recording, and final MP4 pipeline |
 | `xhs-markdown-card-collab` | Publishable Xiaohongshu image-card posts from Markdown, research/job posts, structured note-style social content | Demo bundles with PNG cards, preview HTML, metadata JSON, and theme variation under a locked typography contract |
 
-`presentation-skills` is an open-source repository of high-quality, commercial-grade presentation tools for agent and assistant environments. The goal is reusable workflows that consistently produce polished, editable, validated deliverables close to real business delivery standards.
-
-These skills were not produced in one pass. They were iterated through many real runs, repeated failure analysis, output review, and workflow rewrites. A large amount of paid model tokens was spent to make the workflows, validation gates, and deliverables actually hold up in practice.
-
 ## PowerPoint Decks
 
-`ppt-polished-deck-collab` is designed to cover many deck shapes, not one fixed template:
+`ppt-polished-deck-collab` covers multiple deck types through one workflow:
 
 | Scenario | What it can produce | Demo / Gallery / Evidence |
 | --- | --- | --- |
 | Formal financial report / research deck | Native Office charts, native tables, source notes, disclaimers, stable report layout | [Apple FY2025 financial report review](demos/apple-financial-report-review/README.md) |
 | Editorial / keynote-style analysis | Large serif titles, visual rhythm, native shape charts, strong art direction without HTML screenshots | [Apple editorial ink native test](demos/apple-editorial-ink-native/README.md) |
-| Strategy / executive narrative | Management questions, comparison matrices, decision logic, diagrams, narrative pacing | [Standard Wars executive deck](old/demos/standard-wars-executive-deck/README.md) |
+| Strategy / executive deck | Management questions, comparison matrices, decision logic, diagrams, narrative pacing | [PPT skill page](docs/ppt-polished-deck-collab.md) |
 | Technical explainer / architecture deck | Dataflow, system diagrams, connector-backed editable structures, validation reports | [PPT skill page](docs/ppt-polished-deck-collab.md) |
 | Template-driven business deck | Template audit, master/layout evidence, branded rebuild when needed | [PPT skill page](docs/ppt-polished-deck-collab.md) |
 
@@ -42,10 +87,10 @@ Full PPT skill page: [docs/ppt-polished-deck-collab.md](docs/ppt-polished-deck-c
 
 A single native PPTX page showing the editorial treatment: iPhone as the revenue center, Services as the stable second curve, stacked composition, embedded trend evidence, and a dark magazine-style page rhythm.
 
-| Strategy narrative deck | Financial chart spotlight |
+| Reproducible data-pipeline page | Financial evidence page |
 | --- | --- |
-| [![Standard Wars executive deck contact sheet](assets/standard-wars-executive-deck_contact-sheet.png)](old/demos/standard-wars-executive-deck/README.md) | [![Apple FY2025 revenue and net-income page](assets/apple-financial-report-review_revenue-page.png)](demos/apple-financial-report-review/README.md) |
-| Archived but still useful strategy narrative demo with diagrams, comparison matrices, and management questions. | A single evidence page showing how financial data, chart title, unit, source note, and key message are assembled. |
+| [![Apple editorial ink data pipeline page](demos/apple-editorial-ink-native/build/rendered/ppt_preview/slide_008.png)](demos/apple-editorial-ink-native/README.md) | [![Apple FY2025 revenue and net-income page](assets/apple-financial-report-review_revenue-page.png)](demos/apple-financial-report-review/README.md) |
+| A reproducible data chain from SEC API and 10-K HTML to extraction scripts and native PPTX, showing how automated materials preserve the evidence path. | A single evidence page showing how financial data, chart title, unit, source note, and key message are assembled. |
 
 ## Other Artifact Demos
 
@@ -57,13 +102,12 @@ A single native PPTX page showing the editorial treatment: iPhone as the revenue
 
 ![Prompt example for the Apple financial report review deck](assets/ppt-prompt-example.jpg)
 
-This prompt style is intentionally specific about workspace placement, source data, reference style, disclosure language, and the `ppt-polished-deck-collab` skill route. The Apple demo turns that kind of request into a reproducible research-report workspace rather than a one-off presentation file.
+This prompt style is intentionally specific about workspace placement, source data, reference style, disclosure language, and the `ppt-polished-deck-collab` skill route. The Apple demo turns that kind of request into a reproducible research-report workspace with durable source context and review evidence.
 
 ## Recent Updates
 
 - `2026-05-13` 🎨 Added the Apple editorial-ink native PPTX demo and the dedicated PPT skill showcase page.
 - `2026-05-10` 📊 Made Apple FY2025 financial report review the flagship formal PPT demo.
-- `2026-05-10` Added Standard Wars as an archived strategy-deck example.
 - `2026-05-10` Added Chinese formal-report typography and financial-table defaults for PPT.
 - `2026-05-05` Upgraded XHS fictional demos into rendered PNG bundles.
 - `2026-05-04` Added `xhs-markdown-card-collab` for Markdown-to-image-card posts.
@@ -82,7 +126,7 @@ It is designed for strategy decks, technical explainers, research talks, thesis 
 
 ### `word-polished-doc-collab`
 
-`word-polished-doc-collab` turns Markdown, DOCX, and Python-generated document assets into formal Word deliverables that can survive real review. It focuses on explicit Chinese-English font pairing, heading scale, line spacing, paragraph spacing, table and figure title placement, and delivery evidence instead of one-off DOCX export.
+`word-polished-doc-collab` turns Markdown, DOCX, and Python-generated document assets into formal Word deliverables that can survive real review. It focuses on explicit Chinese-English font pairing, heading scale, line spacing, paragraph spacing, table and figure title placement, and delivery evidence around the final DOCX export.
 
 It is designed for contracts, policies, explanatory notes, research appendices, operating reports, board or investment committee attachments, and other Word-first workflows where the content source must remain maintainable after delivery.
 
@@ -96,13 +140,13 @@ It is designed for technical introductions, business demos, product explainers, 
 
 `xhs-markdown-card-collab` turns Markdown or lightly structured text into publishable Xiaohongshu image-card posts. It focuses on explicit cover metadata, stable Chinese typography, browser-based pagination, visual QA, and style variation without re-breaking proven type-size ranges.
 
-It is designed for job posts, lab recruiting posts, research-note threads, structured commentary cards, product explainers, and other social content where the output must still read cleanly on a phone rather than merely “fit into a PNG”.
+It is designed for job posts, lab recruiting posts, research-note threads, structured commentary cards, product explainers, and other social content where the output must read cleanly on a phone and hold up as a publishable PNG bundle.
 
 ## Skill Details
 
 ### `ppt-polished-deck-collab`
 
-`ppt-polished-deck-collab` starts by turning the user's story into a slide order, one clear message per page, and the evidence each page needs. It then generates a real editable `.pptx`, so the result can still be revised in PowerPoint instead of becoming a stack of screenshots.
+`ppt-polished-deck-collab` starts by turning the user's story into a slide order, one clear message per page, and the evidence each page needs. It then generates a real editable `.pptx`, so the result remains revisable in PowerPoint after delivery.
 
 Common tools:
 - `python-pptx` for editable PowerPoint text, shapes, tables, and pages
@@ -120,7 +164,6 @@ Typical workflow:
 Featured deck examples:
 - Editorial native PPTX style demo: `demos/apple-editorial-ink-native/`
 - Current research-report demo: `demos/apple-financial-report-review/`
-- Archived strategy-deck demo: `old/demos/standard-wars-executive-deck/`
 
 Key outputs:
 - `demos/apple-editorial-ink-native/final/apple_editorial_ink_native_test.pptx`
@@ -130,8 +173,6 @@ Key outputs:
 - `demos/apple-financial-report-review/build/rendered/contact_sheet.png`
 
 [![Apple FY2025 revenue and net-income page](assets/apple-financial-report-review_revenue-page.png)](demos/apple-financial-report-review/README.md)
-
-[![Standard Wars executive deck contact sheet](assets/standard-wars-executive-deck_contact-sheet.png)](old/demos/standard-wars-executive-deck/README.md)
 
 ### `word-polished-doc-collab`
 
@@ -186,7 +227,7 @@ Public demo video:
 
 ### `xhs-markdown-card-collab`
 
-`xhs-markdown-card-collab` starts by cleaning up Markdown into phone-readable headings, lists, and emphasized points, then renders the result as vertical image cards in a real browser. It is designed for research notes, recruiting posts, product explainers, and structured commentary that should read like publishable Xiaohongshu cards instead of ordinary web screenshots.
+`xhs-markdown-card-collab` starts by cleaning up Markdown into phone-readable headings, lists, and emphasized points, then renders the result as vertical image cards in a real browser. It is designed for research notes, recruiting posts, product explainers, and structured commentary that should read like publishable Xiaohongshu cards with browser-rendered evidence and mobile-reading checks.
 
 Common tools:
 - Markdown and YAML front matter for body content, cover title, organization, tags, and highlights
@@ -223,7 +264,6 @@ Typical workflow:
 - Registered XHS weekly-brief demo: `demos/xhs-fictional-ridership-weekly-brief/`
 - Archived complex diagram demo: `old/demos/ppt-complex-diagram-collab-stock-architecture/`
 - Archived polished deck demo: `old/demos/ppt-polished-deck-collab-ai-market-intelligence/`
-- Archived polished deck demo: `old/demos/standard-wars-executive-deck/`
 
 ## XHS Demo Set
 

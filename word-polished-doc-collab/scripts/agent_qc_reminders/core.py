@@ -121,6 +121,8 @@ TAXONOMY_CATALOG: dict[str, TaxonomyEntry] = {
     "qa_check_failed.section_contract": TaxonomyEntry("layout", "section", "layout.section.contract_drift", "Word section 栏数契约不一致。", "repair_section_contract"),
     "qa_check_failed.asset_manifest_integrity": TaxonomyEntry("source_integrity", "asset_manifest", "source_integrity.asset_manifest.invalid", "Word 资产 manifest QA 未通过。", "repair_asset_manifest"),
     "qa_check_failed.visual_review_status": TaxonomyEntry("validation_coverage", "visual_review", "validation_coverage.gate.visual_review_missing", "Word visual review 证据缺失或无效。", "complete_visual_review"),
+    "table_paragraph_special_indent": TaxonomyEntry("typography", "table_indent", "typography.table.indent_review", "Word 表格单元格段落存在非零特殊缩进。", "review_table_indent"),
+    "table_cell_vertical_alignment_not_centered": TaxonomyEntry("typography", "table_alignment", "typography.table.vertical_alignment_review", "Word 表格单元格内容未上下居中。", "repair_table_vertical_alignment"),
     "font_size_policy_off_half_point_grid": TaxonomyEntry("typography", "font_size", "typography.font_size.profile_token_off_grid", "Active profile 自身包含非半点字号 token。", "repair_font_size_token"),
     "font_size_source_literal_off_half_point_grid": TaxonomyEntry("typography", "font_size", "typography.font_size.off_grid", "构建源或配置中手填了偏离 0.5pt 网格的字号。", "repair_font_size_token"),
     "font_size_source_literal_role_drift": TaxonomyEntry("typography", "font_size", "typography.font_size.role_drift", "构建源或配置中的字号偏离 active role token。", "repair_font_size_token"),
@@ -183,6 +185,8 @@ POLICY_CATALOG: dict[str, PolicyEntry] = {
     "content_structure.caption.policy_drift": PolicyEntry("advisory", None, "document_or_fix", ("edit_source", "document_exception"), ("documented_or_fixed",)),
     "content_structure.sequence.block_mismatch": PolicyEntry("hard_block", "build", "rerun_clear", ("edit_source", "rebuild", "rerun"), ("rerun_clear",)),
     "typography.paragraph.style_contract_drift": PolicyEntry("hard_block", "final", "rerun_clear", ("edit_source", "rebuild", "rerun"), ("rerun_clear",)),
+    "typography.table.indent_review": PolicyEntry("advisory", None, "document_or_fix", ("edit_source", "document_exception"), ("documented_or_fixed",)),
+    "typography.table.vertical_alignment_review": PolicyEntry("advisory", None, "document_or_fix", ("edit_source", "document_exception"), ("documented_or_fixed",)),
     "typography.font_slot.integrity": PolicyEntry("hard_block", "final", "rerun_clear", ("edit_source", "rebuild", "rerun"), ("rerun_clear",)),
     "typography.font_size.profile_token_off_grid": PolicyEntry("advisory", None, "document_or_fix", ("edit_profile", "document_exception"), ("documented_or_fixed",)),
     "typography.font_size.off_grid": PolicyEntry("advisory", None, "document_or_fix", ("edit_source", "document_exception"), ("documented_or_fixed",)),
@@ -560,6 +564,20 @@ def word_qa_report_to_observations(
                 artifact=artifact,
                 location=location,
                 details=details,
+            )
+        )
+    for item in report.get("table_format_observations") or []:
+        observations.append(
+            make_observation(
+                code=item.get("code", "table_paragraph_special_indent"),
+                severity=item.get("severity", "warning"),
+                message=item.get("message") or "",
+                suggested_fix=item.get("suggested_fix"),
+                source={"skill": skill, "gate": gate},
+                detector={"id": "word.table.format_check", "layer": "structure", "method": "docx_table_format_analysis", "version": "1.0"},
+                artifact=artifact,
+                location=item.get("location") or {"kind": "table_cell"},
+                details=dict(item.get("details") or {}),
             )
         )
     return observations
@@ -1119,6 +1137,13 @@ def format_location(location: dict[str, Any]) -> str:
             f"table {location.get('table')} | row {location.get('row')} | col {location.get('col')} "
             f"| paragraph {location.get('paragraph')} | run {location.get('run')}"
         )
+    if kind == "table_paragraph":
+        return (
+            f"table {location.get('table')} | row {location.get('row')} | col {location.get('col')} "
+            f"| paragraph {location.get('paragraph')}"
+        )
+    if kind == "table_cell":
+        return f"table {location.get('table')} | row {location.get('row')} | col {location.get('col')}"
     if kind == "qa_check":
         return f"qa_check {location.get('check')}"
     if kind == "source_issue":

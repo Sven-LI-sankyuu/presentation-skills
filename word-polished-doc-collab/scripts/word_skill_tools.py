@@ -47,6 +47,7 @@ try:
     from docx.document import Document as DocumentObject
     from docx.enum.section import WD_SECTION
     from docx.enum.style import WD_STYLE_TYPE
+    from docx.enum.table import WD_CELL_VERTICAL_ALIGNMENT
     from docx.enum.text import WD_ALIGN_PARAGRAPH
     from docx.oxml import OxmlElement
     from docx.oxml.ns import qn
@@ -59,6 +60,7 @@ except Exception as exc:  # noqa: BLE001
     DocumentObject = Any
     WD_SECTION = None
     WD_STYLE_TYPE = None
+    WD_CELL_VERTICAL_ALIGNMENT = None
     WD_ALIGN_PARAGRAPH = None
     OxmlElement = None
     qn = None
@@ -75,6 +77,9 @@ FONT_SIZE_GRID_PT = 0.5
 FONT_SIZE_GRID_TOLERANCE_PT = 0.02
 FONT_SIZE_FRAGMENTATION_LIMIT = 10
 FONT_SIZE_ADVISORY_EXAMPLE_LIMIT = 5
+TABLE_INDENT_TOLERANCE_PT = 0.25
+TABLE_INDENT_TOLERANCE_CHARS = 0.01
+TABLE_FORMAT_ADVISORY_EXAMPLE_LIMIT = 5
 INLINE_BOLD_PATTERN = re.compile(r"(\*\*.*?\*\*)")
 IMAGE_PATTERN = re.compile(r"!\[(?P<alt>.*?)\]\((?P<path>.*?)\)")
 TABLE_TITLE_PATTERN = re.compile(r"^(表|Table)\s*\d+(?:[-.]\d+)?(?:\s+|:|$).+", re.IGNORECASE)
@@ -996,11 +1001,15 @@ def add_table(document: DocumentObject, rows: list[list[str]], profile: StylePro
             raise ValueError("表格列数不一致，无法稳定构建 DOCX。")
         for col_index, cell_text in enumerate(row):
             cell = table.cell(row_index, col_index)
+            cell.vertical_alignment = WD_CELL_VERTICAL_ALIGNMENT.CENTER
             cell.text = ""
             paragraph = cell.paragraphs[0]
             paragraph.paragraph_format.space_before = Pt(0)
             paragraph.paragraph_format.space_after = Pt(0)
             paragraph.paragraph_format.first_line_indent = Pt(0)
+            paragraph.paragraph_format.left_indent = Pt(0)
+            paragraph.paragraph_format.right_indent = Pt(0)
+            set_paragraph_character_indents_zero(paragraph)
             paragraph.paragraph_format.line_spacing = 1.0
             paragraph.alignment = resolve_table_alignment(row_index, col_index, numeric_columns)
 
@@ -1023,6 +1032,20 @@ def add_table(document: DocumentObject, rows: list[list[str]], profile: StylePro
         set_table_borders(table, "C9D3DF")
     elif profile.name == "teal_consulting_report":
         set_table_borders(table, "BFD6CE")
+
+
+def set_paragraph_character_indents_zero(paragraph) -> None:
+    """显式清除 Word 以字符为单位保存的首行、悬挂及左右缩进。"""
+
+    paragraph_properties = paragraph._p.get_or_add_pPr()
+    indent_element = paragraph_properties.find(qn("w:ind"))
+    if indent_element is None:
+        indent_element = OxmlElement("w:ind")
+        paragraph_properties.append(indent_element)
+    indent_element.set(qn("w:firstLineChars"), "0")
+    indent_element.set(qn("w:leftChars"), "0")
+    indent_element.set(qn("w:rightChars"), "0")
+    indent_element.attrib.pop(qn("w:hangingChars"), None)
 
 
 def add_figure(document: DocumentObject, base_dir: Path, image_path: str | None, profile: StyleProfile) -> None:
@@ -1365,7 +1388,10 @@ def run_docx_qa(
     passed_all_auto = all(result.passed for name, result in results.items() if name != "visual_review_status")
     passed_all = all(result.passed for result in results.values())
     font_size_observations = collect_font_size_observations(document, profile)
-    font_size_advisories = aggregate_font_size_advisories(font_size_observations)
+    table_format_observations = collect_table_format_observations(document)
+    advisories = aggregate_font_size_advisories(font_size_observations)
+    advisories.extend(aggregate_table_format_advisories(table_format_observations))
+    advisories.sort(key=lambda item: item["code"])
     return {
         "markdown_path": str(markdown_path),
         "docx_path": str(docx_path),
@@ -1376,9 +1402,10 @@ def run_docx_qa(
         "workflow_mode": workflow_mode,
         "passed_all_auto_checks": passed_all_auto,
         "passed_all_checks": passed_all,
-        "advisory_summary": {"warning": sum(item["count"] for item in font_size_advisories)},
-        "advisories": font_size_advisories,
+        "advisory_summary": {"warning": sum(item["count"] for item in advisories)},
+        "advisories": advisories,
         "font_size_observations": font_size_observations,
+        "table_format_observations": table_format_observations,
         "checks": {name: asdict(result) for name, result in results.items()},
     }
 
@@ -1510,6 +1537,239 @@ def check_table_contract(document: Document, profile: StyleProfile) -> list[str]
                     failures.append(f"表 {table_index} 表头未加粗。")
                     return failures
     return failures
+
+
+def collect_table_format_observations(document: Document) -> list[dict]:
+    """记录表格缩进与垂直对齐的默认契约偏离，作为不阻断交付的提醒。"""
+
+    observations: list[dict] = []
+    for table_index, table in enumerate(document.tables, start=1):
+        seen_cells: set[Any] = set()
+        for row_index, row in enumerate(table.rows, start=1):
+            for col_index, cell in enumerate(row.cells, start=1):
+                cell_key = cell._tc
+                if cell_key in seen_cells:
+                    continue
+                seen_cells.add(cell_key)
+                for paragraph_index, paragraph in enumerate(cell.paragraphs, start=1):
+                    indent_values = effective_paragraph_indents_pt(paragraph)
+                    character_indent_values = effective_paragraph_indents_chars(paragraph)
+                    nonzero_indents = {
+                        name: value
+                        for name, value in {**indent_values, **character_indent_values}.items()
+                        if not is_zero_table_indent(name, value)
+                    }
+                    if not nonzero_indents:
+                        continue
+                    observations.append(
+                        {
+                            "severity": "warning",
+                            "code": "table_paragraph_special_indent",
+                            "message": "表格单元格段落存在非零特殊缩进，可能误继承了正文或列表格式。",
+                            "suggested_fix": (
+                                "表格内容默认将首行、悬挂、左侧和右侧缩进归零；"
+                                "如果该单元格确实包含需要首行缩进的大段连续文本，确认版式后保留并记录例外。"
+                            ),
+                            "location": {
+                                "kind": "table_paragraph",
+                                "table": table_index,
+                                "row": row_index,
+                                "col": col_index,
+                                "paragraph": paragraph_index,
+                            },
+                            "details": {
+                                **indent_values,
+                                **character_indent_values,
+                                "nonzero_indents": nonzero_indents,
+                                "text_preview": paragraph.text.strip()[:80],
+                            },
+                        }
+                    )
+                actual_alignment = cell.vertical_alignment
+                if actual_alignment != WD_CELL_VERTICAL_ALIGNMENT.CENTER:
+                    observations.append(
+                        {
+                            "severity": "warning",
+                            "code": "table_cell_vertical_alignment_not_centered",
+                            "message": "表格单元格内容没有设置为上下居中。",
+                            "suggested_fix": (
+                                "将单元格 vertical_alignment 显式设为 center；"
+                                "如外部模板确有特殊表格规则，确认后记录例外。"
+                            ),
+                            "location": {
+                                "kind": "table_cell",
+                                "table": table_index,
+                                "row": row_index,
+                                "col": col_index,
+                            },
+                            "details": {
+                                "actual_vertical_alignment": vertical_alignment_name(actual_alignment),
+                                "expected_vertical_alignment": "center",
+                                "text_preview": cell.text.strip()[:80],
+                            },
+                        }
+                    )
+    return observations
+
+
+def effective_paragraph_indents_pt(paragraph) -> dict[str, float]:
+    """解析段落直接格式或完整样式继承链中的首行、左侧和右侧缩进。"""
+
+    paragraph_format = paragraph.paragraph_format
+    return {
+        "first_line_indent_pt": effective_paragraph_length_pt(
+            paragraph_format.first_line_indent,
+            paragraph.style,
+            "first_line_indent",
+        ),
+        "left_indent_pt": effective_paragraph_length_pt(
+            paragraph_format.left_indent,
+            paragraph.style,
+            "left_indent",
+        ),
+        "right_indent_pt": effective_paragraph_length_pt(
+            paragraph_format.right_indent,
+            paragraph.style,
+            "right_indent",
+        ),
+    }
+
+
+def effective_paragraph_indents_chars(paragraph) -> dict[str, float]:
+    """解析段落直接格式或完整样式继承链中以字符为单位保存的缩进。"""
+
+    first_line_chars, hanging_chars = effective_special_indent_chars(paragraph)
+    return {
+        "first_line_indent_chars": first_line_chars,
+        "hanging_indent_chars": hanging_chars,
+        "left_indent_chars": effective_indent_attribute_chars(paragraph, "leftChars"),
+        "right_indent_chars": effective_indent_attribute_chars(paragraph, "rightChars"),
+    }
+
+
+def effective_special_indent_chars(paragraph) -> tuple[float, float]:
+    """按 OOXML 互斥语义解析 firstLineChars 与 hangingChars 的有效值。"""
+
+    property_chain = [paragraph._p.pPr]
+    current_style = paragraph.style
+    visited_style_ids: set[str] = set()
+    while current_style is not None and current_style.style_id not in visited_style_ids:
+        visited_style_ids.add(current_style.style_id)
+        property_chain.append(current_style._element.pPr)
+        current_style = current_style.base_style
+
+    for paragraph_properties in property_chain:
+        first_line_value = indent_attribute_chars(paragraph_properties, "firstLineChars")
+        hanging_value = indent_attribute_chars(paragraph_properties, "hangingChars")
+        if first_line_value is not None or hanging_value is not None:
+            return first_line_value or 0.0, hanging_value or 0.0
+    return 0.0, 0.0
+
+
+def effective_indent_attribute_chars(paragraph, attribute_name: str) -> float:
+    """优先读取段落直接 OOXML，再沿 base_style 查找字符缩进，未设置时返回零。"""
+
+    direct_value = indent_attribute_chars(paragraph._p.pPr, attribute_name)
+    if direct_value is not None:
+        return direct_value
+    current_style = paragraph.style
+    visited_style_ids: set[str] = set()
+    while current_style is not None and current_style.style_id not in visited_style_ids:
+        visited_style_ids.add(current_style.style_id)
+        style_value = indent_attribute_chars(current_style._element.pPr, attribute_name)
+        if style_value is not None:
+            return style_value
+        current_style = current_style.base_style
+    return 0.0
+
+
+def indent_attribute_chars(paragraph_properties, attribute_name: str) -> float | None:
+    """读取 `<w:ind>` 的百分之一字符单位，并对非法 OOXML 正确失败。"""
+
+    if paragraph_properties is None:
+        return None
+    indent_element = paragraph_properties.find(qn("w:ind"))
+    if indent_element is None:
+        return None
+    raw_value = indent_element.get(qn(f"w:{attribute_name}"))
+    if raw_value is None:
+        return None
+    try:
+        return int(raw_value) / 100
+    except ValueError as exc:
+        raise ValueError(f"非法 Word 字符缩进值: w:{attribute_name}={raw_value!r}") from exc
+
+
+def is_zero_table_indent(name: str, value: float) -> bool:
+    """按 pt 或字符单位使用各自容差判断表格缩进是否为零。"""
+
+    tolerance = TABLE_INDENT_TOLERANCE_CHARS if name.endswith("_chars") else TABLE_INDENT_TOLERANCE_PT
+    return is_close(value, 0.0, tolerance)
+
+
+def effective_paragraph_length_pt(direct_value, style, attribute_name: str) -> float:
+    """优先读取直接格式，再沿 base_style 查找有效缩进，未设置时返回零。"""
+
+    direct_pt = _pt_value(direct_value)
+    if direct_pt is not None:
+        return direct_pt
+    current_style = style
+    visited_style_ids: set[str] = set()
+    while current_style is not None and current_style.style_id not in visited_style_ids:
+        visited_style_ids.add(current_style.style_id)
+        style_value = getattr(current_style.paragraph_format, attribute_name)
+        style_pt = _pt_value(style_value)
+        if style_pt is not None:
+            return style_pt
+        current_style = current_style.base_style
+    return 0.0
+
+
+def vertical_alignment_name(alignment) -> str:
+    """把 python-docx 的单元格垂直对齐值转成稳定报告文本。"""
+
+    if alignment is None:
+        return "unset"
+    name = getattr(alignment, "name", None)
+    return str(name).lower() if name else str(alignment)
+
+
+def aggregate_table_format_advisories(observations: list[dict]) -> list[dict]:
+    """按问题类型聚合表格格式 observation，并限制代表位置数量。"""
+
+    buckets: dict[str, dict] = {}
+    for item in observations:
+        bucket = buckets.setdefault(
+            item["code"],
+            {
+                "severity": "warning",
+                "code": item["code"],
+                "count": 0,
+                "message": item["message"],
+                "suggested_fix": item["suggested_fix"],
+                "examples": [],
+            },
+        )
+        bucket["count"] += 1
+        if len(bucket["examples"]) < TABLE_FORMAT_ADVISORY_EXAMPLE_LIMIT:
+            bucket["examples"].append(table_format_observation_example(item))
+    return [buckets[code] for code in sorted(buckets)]
+
+
+def table_format_observation_example(observation: dict) -> str:
+    """把表格格式 observation 转成紧凑的代表位置。"""
+
+    location = observation.get("location") or {}
+    details = observation.get("details") or {}
+    base = f"table={location.get('table')} row={location.get('row')} col={location.get('col')}"
+    if location.get("kind") == "table_cell":
+        return f"{base} vertical_alignment={details.get('actual_vertical_alignment')}"
+    nonzero = details.get("nonzero_indents") or {}
+    values = ", ".join(
+        f"{name}={value:g}{'chars' if name.endswith('_chars') else 'pt'}"
+        for name, value in sorted(nonzero.items())
+    )
+    return f"{base} paragraph={location.get('paragraph')} {values}"
 
 
 def collect_font_size_advisories(document: Document, profile: StyleProfile) -> list[dict]:
@@ -2171,11 +2431,11 @@ def report_to_markdown(title: str, report: dict) -> str:
     lines.append(f"- DOCX：`{report['docx_path']}`")
     lines.append(f"- Asset manifest：`{report['asset_manifest_path']}`")
     lines.append(f"- Visual review：`{report['visual_review_path']}`")
-    lines.append(f"- 字号提醒数：`{report.get('advisory_summary', {}).get('warning', 0)}`")
+    lines.append(f"- 质量提醒数：`{report.get('advisory_summary', {}).get('warning', 0)}`")
     lines.append("")
     advisories = report.get("advisories") or []
     if advisories:
-        lines.append("## 字号提醒")
+        lines.append("## 质量提醒")
         lines.append("")
         for advisory in advisories:
             lines.append(f"### `{advisory['code']}` × {advisory['count']}")

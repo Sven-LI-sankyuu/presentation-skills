@@ -1,19 +1,64 @@
-# presentation-skills
+<div align="center">
+  <table>
+    <tr>
+      <td style="vertical-align: middle;">
+        <img src="assets/presentation-skills-logo.svg" alt="presentation-skills logo" width="120" />
+      </td>
+      <td align="left" style="padding-left: 24px;">
+        <h1 style="margin: 0 0 8px;">presentation-skills</h1>
+        <p style="margin: 0 0 12px;">
+          <strong>面向真实办公交付的 Agent presentation skills</strong><br/>
+          生成可编辑 PowerPoint、正式 Word 文档与可发布 demo 视频，<br>并把页面叙事、中文排版、原生表格 / 图表和质量检查放进同一条工作流。
+        </p>
+        <p style="margin: 0 0 12px;">
+          <img src="https://img.shields.io/badge/PPTX-editable-2ea44f?style=flat-square" alt="editable PPTX" />
+          <img src="https://img.shields.io/badge/DOCX-formal-2b579a?style=flat-square" alt="formal DOCX" />
+          <img src="https://img.shields.io/badge/charts-Office%20native-d2492a?style=flat-square" alt="Office-native charts" />
+          <img src="https://img.shields.io/badge/QC-Chinese%20typography-6f42c1?style=flat-square" alt="Chinese typography QC" />
+          <img src="https://img.shields.io/badge/render-review-brightgreen?style=flat-square" alt="render review" />
+        </p>
+        <p style="margin: 0;">
+          <a href="README.md">🇬🇧 English README</a>
+        </p>
+      </td>
+    </tr>
+  </table>
+</div>
 
-[English README](README.md)
+<table>
+  <tr>
+    <td width="25%">
+      <strong>📋 贴近真实办公场景</strong><br/>
+      覆盖研报、管理汇报、技术方案、答辩、产品演示、演讲分享和模板化商业材料，并区分阅读型 deck 与演讲型 deck。
+    </td>
+    <td width="25%">
+      <strong>✏️ 保留 Office 可编辑性</strong><br/>
+      优先使用 PowerPoint / Word 原生文本、形状、表格、图表和必要 connector，方便会后继续改文字、改数字和调版式。
+    </td>
+    <td width="25%">
+      <strong>📄 公文级中文排版细节</strong><br/>
+      支持宋体 / 黑体、Times New Roman、小四正文、1.5 倍行距、段前段后 0.5 行、五号表格和财务数值右对齐等办公规则。
+    </td>
+    <td width="25%">
+      <strong>🔍 质量检查减少返工</strong><br/>
+      检查文本溢出、对象遮挡、字号漂移、表格上下居中、表格特殊缩进、整页截图背景和预览图边界风险。
+    </td>
+  </tr>
+</table>
 
-**TL;DR。** `presentation-skills` 是一组面向真实交付的 production-grade skills，覆盖可编辑 PowerPoint deck、正式 Word 文档和可发布 demo 视频。`ppt-polished-deck-collab` 是 flagship skill，能产出可编辑、可预览、可验证的 PowerPoint deck，覆盖研报、策略汇报、技术说明、演讲分享、模板化商业材料等多种场景。
+
+`presentation-skills` 是一个面向 agent / assistant 环境的开源 presentation 工具仓库，重点服务真实会议、评审、汇报和外发材料。这里关注的结果是：PPT 更整齐、文字更可读、图表和表格更像正式 Office 文件、交付后还能继续编辑，后续返工次数更少。
+
+> 大量返工与测试：经过了大量真实任务中的反复迭代、失败分析、产物复核和工作流重写。与让 Codex / Claude Code 随手编写的 skill 有质的区别。
+
+> 交付前的质量检查：文本边界、字号系统、表格上下居中、表格特殊缩进、整页截图背景、预览图边界风险都会进入检查和提醒。
 
 | Skill | 适合场景 | Demo 亮点 |
 | --- | --- | --- |
-| `ppt-polished-deck-collab` | 可编辑研报、executive deck、策略叙事、技术说明、演讲分享、模板化商业材料 | 两套 Apple 财报分析 deck 使用相近主题，却呈现正式研报版与艺术化 editorial ink 原生 PPTX 版两种完全不同表达 |
+| `ppt-polished-deck-collab` | 可编辑研报、executive deck、策略汇报、技术说明、演讲分享、模板化商业材料 | 两套 Apple 财报分析 deck 使用相近主题，却呈现正式研报版与艺术化 editorial ink 原生 PPTX 版两种完全不同表达 |
 | `word-polished-doc-collab` | 正式报告、董事会附件、研究附录、制度文档、咨询风格 Word 交付 | 中文轻量正式报告 + 英文精细咨询报告，包含 preview 和 QA bundle |
 | `web-demo-video-synthesis` | 产品 walkthrough、网页 demo、带旁白解释视频、可发布短视频 | 网页、配音、字幕、录屏和最终 MP4 的端到端流水线 |
 | `xhs-markdown-card-collab` | 从 Markdown 生成可发布的小红书图文卡片、研究/招聘帖子、结构化笔记型内容 | 导出的虚构 demo 成品，包含 PNG 卡片、预览 HTML、metadata JSON，以及在锁定字号合同下的主题变化示例 |
-
-`presentation-skills` 是一个面向 agent / assistant 环境的开源 presentation 工具仓库。这里的重点不是“生成一页图”或“临时拼一版演示”，而是把 deck、doc 和 video 的生产过程变成可复跑、可编辑、可验证、可交付的完整流水线。
-
-这些 skills 不是一轮 prompt 产物。它们经过了大量真实任务中的反复迭代、失败分析、产物复核和工作流重写，并且为此消耗了大量真实付费 token，才把流程、验证链和最终输出收敛到当前这个水平。
 
 ## PowerPoint Decks
 
@@ -23,7 +68,7 @@
 | --- | --- | --- |
 | 正式财报 / 研报型 deck | Office 原生图表、原生表格、来源注、免责声明、稳定研报版心 | [Apple FY2025 财报点评](demos/apple-financial-report-review/README.md) |
 | 艺术化分析 / keynote 分享 | 大号衬线标题、强视觉节奏、native shape chart、无 HTML 截图的风格迁移 | [Apple editorial ink native test](demos/apple-editorial-ink-native/README.md) |
-| 策略叙事 / executive deck | 管理层问题、对比矩阵、决策逻辑、结构图和叙事节奏 | [Standard Wars executive deck](old/demos/standard-wars-executive-deck/README.md) |
+| 策略汇报 / executive deck | 管理层问题、对比矩阵、决策逻辑、结构图和叙事节奏 | [PPT skill 专页](docs/ppt-polished-deck-collab.md) |
 | 技术说明 / 架构解释 | dataflow、系统图、可绑定 connector、结构校验报告 | [PPT skill 专页](docs/ppt-polished-deck-collab.md) |
 | 模板驱动商业材料 | 模板审计、母版 / layout 取证、必要时 branded rebuild | [PPT skill 专页](docs/ppt-polished-deck-collab.md) |
 
@@ -42,10 +87,10 @@ PPT skill 专页：[docs/ppt-polished-deck-collab.md](docs/ppt-polished-deck-col
 
 这个单页更适合在 README 直接放大展示：iPhone 作为收入中枢，Services 作为稳定第二曲线，产品结构、趋势证据和深色 editorial 页面节奏都集中在一页里。
 
-| 策略叙事 deck | 财务证据页 |
+| 可复跑数据链路页 | 财务证据页 |
 | --- | --- |
-| [![标准战争 executive deck contact sheet](assets/standard-wars-executive-deck_contact-sheet.png)](old/demos/standard-wars-executive-deck/README.md) | [![Apple FY2025 收入与净利润页](assets/apple-financial-report-review_revenue-page.png)](demos/apple-financial-report-review/README.md) |
-| 归档但仍然保留展示价值的策略叙事 demo，包含结构图、对比矩阵和管理层问题清单。 | 单页财务证据示例，展示图表、图题、单位、来源和核心判断如何组合。 |
+| [![Apple editorial ink data pipeline 页面](demos/apple-editorial-ink-native/build/rendered/ppt_preview/slide_008.png)](demos/apple-editorial-ink-native/README.md) | [![Apple FY2025 收入与净利润页](assets/apple-financial-report-review_revenue-page.png)](demos/apple-financial-report-review/README.md) |
+| 从 SEC API、10-K HTML、抽取脚本到 native PPTX 的可复跑数据链路，展示自动化材料如何保留证据路径。 | 单页财务证据示例，展示图表、图题、单位、来源和核心判断如何组合。 |
 
 ## 其他交付物 Demo
 
@@ -63,7 +108,6 @@ PPT skill 专页：[docs/ppt-polished-deck-collab.md](docs/ppt-polished-deck-col
 
 - `2026-05-13` 🎨 新增 Apple editorial-ink native PPTX demo 和 PPT skill 专页。
 - `2026-05-10` 📊 将 Apple FY2025 财报点评设为正式 PPT 主 demo。
-- `2026-05-10` 保留 Standard Wars 作为归档策略 deck 示例。
 - `2026-05-10` 增加 PPT 中文正式材料排版与财务表格默认规则。
 - `2026-05-05` 将 XHS 虚构 demo 升级为已渲染 PNG bundle。
 - `2026-05-04` 新增 `xhs-markdown-card-collab`，支持 Markdown 转图文卡片。
@@ -120,7 +164,6 @@ PPT skill 专页：[docs/ppt-polished-deck-collab.md](docs/ppt-polished-deck-col
 展示样例：
 - 艺术化 native PPTX 风格迁移 demo：`demos/apple-editorial-ink-native/`
 - 当前研报型 demo：`demos/apple-financial-report-review/`
-- 归档策略叙事型 demo：`old/demos/standard-wars-executive-deck/`
 
 关键输出：
 - `demos/apple-editorial-ink-native/final/apple_editorial_ink_native_test.pptx`
@@ -130,8 +173,6 @@ PPT skill 专页：[docs/ppt-polished-deck-collab.md](docs/ppt-polished-deck-col
 - `demos/apple-financial-report-review/build/rendered/contact_sheet.png`
 
 [![Apple FY2025 收入与净利润页](assets/apple-financial-report-review_revenue-page.png)](demos/apple-financial-report-review/README.md)
-
-[![标准战争 executive deck contact sheet](assets/standard-wars-executive-deck_contact-sheet.png)](old/demos/standard-wars-executive-deck/README.md)
 
 ### `word-polished-doc-collab`
 
@@ -223,7 +264,6 @@ PPT skill 专页：[docs/ppt-polished-deck-collab.md](docs/ppt-polished-deck-col
 - 正式 XHS 周报快评型 demo：`demos/xhs-fictional-ridership-weekly-brief/`
 - 归档复杂图 demo：`old/demos/ppt-complex-diagram-collab-stock-architecture/`
 - 归档 polished deck demo：`old/demos/ppt-polished-deck-collab-ai-market-intelligence/`
-- 归档 polished deck demo：`old/demos/standard-wars-executive-deck/`
 
 ## XHS Demo 组
 

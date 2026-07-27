@@ -33,6 +33,7 @@ from agent_qc_reminders import write_agent_reminder
 EMU_PER_PT = 12700.0
 DEFAULT_BODY_FONT_PT = 14.0
 FONT_SIZE_LOCATION_EXAMPLE_LIMIT = 12
+TABLE_INDENT_TOLERANCE_PT = 0.25
 
 
 @dataclass(frozen=True)
@@ -101,6 +102,43 @@ class FontSizeOccurrence:
     text: str
     font_size_pt: float
     setting_source: str
+
+
+@dataclass(frozen=True)
+class TableCellFormatRecord:
+    """表格单元格级格式事实。"""
+
+    slide_number: int
+    owner_shape_id: int
+    owner_shape_name: str
+    table_index_on_slide: int
+    row: int
+    col: int
+    vertical_anchor: str
+    text_preview: str
+    is_merge_origin: bool
+    is_spanned: bool
+    span_width: int
+    span_height: int
+
+
+@dataclass(frozen=True)
+class TableParagraphFormatRecord:
+    """表格单元格段落级缩进事实。"""
+
+    slide_number: int
+    owner_shape_id: int
+    owner_shape_name: str
+    table_index_on_slide: int
+    row: int
+    col: int
+    paragraph: int
+    text_preview: str
+    paragraph_level: int
+    paragraph_margin_left_pt: float
+    paragraph_margin_right_pt: float
+    paragraph_indent_pt: float
+    nonzero_indents: dict[str, float]
 
 
 @dataclass(frozen=True)
@@ -500,6 +538,158 @@ def collect_text_items(prs: Presentation) -> list[TextItemRecord]:
     return items
 
 
+def collect_table_cell_format_records(prs: Presentation) -> list[TableCellFormatRecord]:
+    """收集原生 PPT 表格单元格的垂直对齐事实。"""
+
+    records: list[TableCellFormatRecord] = []
+
+    def visit_shapes(slide_number: int, shapes, table_counter: list[int]) -> None:
+        for shape in shapes:
+            if getattr(shape, "has_table", False):
+                table_counter[0] += 1
+                records.extend(iter_table_cell_format_records(slide_number, shape, table_counter[0]))
+            if getattr(shape, "shape_type", None) == MSO_SHAPE_TYPE.GROUP:
+                visit_shapes(slide_number, shape.shapes, table_counter)
+
+    for slide_number, slide in enumerate(prs.slides, start=1):
+        visit_shapes(slide_number, slide.shapes, [0])
+    return records
+
+
+def collect_table_paragraph_format_records(prs: Presentation) -> list[TableParagraphFormatRecord]:
+    """收集原生 PPT 表格单元格段落的缩进事实。"""
+
+    records: list[TableParagraphFormatRecord] = []
+
+    def visit_shapes(slide_number: int, shapes, table_counter: list[int]) -> None:
+        for shape in shapes:
+            if getattr(shape, "has_table", False):
+                table_counter[0] += 1
+                records.extend(iter_table_paragraph_format_records(slide_number, shape, table_counter[0]))
+            if getattr(shape, "shape_type", None) == MSO_SHAPE_TYPE.GROUP:
+                visit_shapes(slide_number, shape.shapes, table_counter)
+
+    for slide_number, slide in enumerate(prs.slides, start=1):
+        visit_shapes(slide_number, slide.shapes, [0])
+    return records
+
+
+def iter_table_cell_format_records(slide_number: int, shape, table_index_on_slide: int) -> Iterable[TableCellFormatRecord]:
+    """遍历单个 table shape 的非空、可见单元格格式事实。"""
+
+    shape_id = getattr(shape, "shape_id", -1)
+    shape_name = getattr(shape, "name", "")
+    for row_index, row in enumerate(shape.table.rows, start=1):
+        for col_index, cell in enumerate(row.cells, start=1):
+            text = normalize_text(cell.text)
+            if not text or getattr(cell, "is_spanned", False):
+                continue
+            records = TableCellFormatRecord(
+                slide_number=slide_number,
+                owner_shape_id=shape_id,
+                owner_shape_name=shape_name,
+                table_index_on_slide=table_index_on_slide,
+                row=row_index,
+                col=col_index,
+                vertical_anchor=vertical_anchor_name(cell.vertical_anchor),
+                text_preview=shorten_text(text, 80),
+                is_merge_origin=getattr(cell, "is_merge_origin", False),
+                is_spanned=getattr(cell, "is_spanned", False),
+                span_width=getattr(cell, "span_width", 1),
+                span_height=getattr(cell, "span_height", 1),
+            )
+            yield records
+
+
+def iter_table_paragraph_format_records(slide_number: int, shape, table_index_on_slide: int) -> Iterable[TableParagraphFormatRecord]:
+    """遍历单个 table shape 的非空单元格段落缩进事实。"""
+
+    shape_id = getattr(shape, "shape_id", -1)
+    shape_name = getattr(shape, "name", "")
+    for row_index, row in enumerate(shape.table.rows, start=1):
+        for col_index, cell in enumerate(row.cells, start=1):
+            if getattr(cell, "is_spanned", False):
+                continue
+            for paragraph_index, paragraph in enumerate(cell.text_frame.paragraphs, start=1):
+                text = normalize_text(paragraph.text)
+                if not text:
+                    continue
+                indent_values = paragraph_indent_values(paragraph)
+                nonzero_indents = {
+                    name: value
+                    for name, value in indent_values.items()
+                    if not is_zero_table_indent(value)
+                }
+                yield TableParagraphFormatRecord(
+                    slide_number=slide_number,
+                    owner_shape_id=shape_id,
+                    owner_shape_name=shape_name,
+                    table_index_on_slide=table_index_on_slide,
+                    row=row_index,
+                    col=col_index,
+                    paragraph=paragraph_index,
+                    text_preview=shorten_text(text, 80),
+                    nonzero_indents=nonzero_indents,
+                    **indent_values,
+                )
+
+
+def paragraph_indent_values(paragraph) -> dict[str, float | int]:
+    """读取 PPT 段落层级和 OOXML 缩进属性，未设置时按零处理。"""
+
+    return {
+        "paragraph_level": paragraph_level(paragraph),
+        "paragraph_margin_left_pt": paragraph_indent_attr_pt(paragraph, "marL"),
+        "paragraph_margin_right_pt": paragraph_indent_attr_pt(paragraph, "marR"),
+        "paragraph_indent_pt": paragraph_indent_attr_pt(paragraph, "indent"),
+    }
+
+
+def paragraph_level(paragraph) -> int:
+    """读取 `a:pPr/@lvl`，缺省时返回顶层级别 `0`。"""
+
+    p_pr = paragraph._p.pPr
+    if p_pr is None:
+        return 0
+    raw_value = p_pr.get("lvl")
+    if raw_value is None:
+        return 0
+    try:
+        return int(raw_value)
+    except ValueError as exc:
+        raise ValueError(f"非法 PPT 段落级别值: lvl={raw_value!r}") from exc
+
+
+def paragraph_indent_attr_pt(paragraph, attribute_name: str) -> float:
+    """读取 `a:pPr` 段落缩进属性并转换为 pt，缺省时返回零。"""
+
+    p_pr = paragraph._p.pPr
+    if p_pr is None:
+        return 0.0
+    raw_value = p_pr.get(attribute_name)
+    if raw_value is None:
+        return 0.0
+    try:
+        return emu_to_pt(int(raw_value))
+    except ValueError as exc:
+        raise ValueError(f"非法 PPT 段落缩进值: {attribute_name}={raw_value!r}") from exc
+
+
+def vertical_anchor_name(anchor) -> str:
+    """把 `python-pptx` 的垂直锚点枚举转成稳定小写标签。"""
+
+    if anchor is None:
+        return "unset"
+    name = getattr(anchor, "name", None)
+    return str(name).lower() if name else str(anchor).lower()
+
+
+def is_zero_table_indent(value: float) -> bool:
+    """判断表格段落缩进是否可视为零。"""
+
+    return abs(float(value)) <= TABLE_INDENT_TOLERANCE_PT
+
+
 def rect_intersection_area(rect_a: RectPt, rect_b: RectPt) -> float:
     """返回两个矩形的相交面积。"""
     overlap_width = max(0.0, min(rect_a.right, rect_b.right) - max(rect_a.left, rect_b.left))
@@ -607,6 +797,10 @@ def render_issue_markdown(title: str, payload: dict) -> str:
         return (
             issue.get("slide_number"),
             issue.get("shape_id"),
+            details.get("table_index_on_slide"),
+            details.get("row"),
+            details.get("col"),
+            details.get("paragraph"),
             details.get("target_shape_id"),
             details.get("occluding_shape_id"),
         )
@@ -619,6 +813,27 @@ def render_issue_markdown(title: str, payload: dict) -> str:
             parts.append(f"slide {exemplar['slide_number']}")
         if exemplar.get("shape_id") is not None:
             parts.append(f"shape {exemplar['shape_id']}")
+
+        table_positions = {
+            (
+                details.get("table_index_on_slide"),
+                details.get("row"),
+                details.get("col"),
+                details.get("paragraph"),
+            )
+            for details in details_list
+            if details.get("row") is not None and details.get("col") is not None
+        }
+        if table_positions:
+            formatted_positions = []
+            for table_index, row, col, paragraph in sorted(table_positions):
+                item = f"table={table_index} row={row} col={col}"
+                if paragraph is not None:
+                    item += f" paragraph={paragraph}"
+                formatted_positions.append(item)
+            parts.append("cells=" + "; ".join(formatted_positions[:3]))
+            if len(formatted_positions) > 3:
+                parts.append(f"cell_occurrences={len(formatted_positions)}")
 
         target_shape_ids = {details.get("target_shape_id") for details in details_list if details.get("target_shape_id") is not None}
         occluding_shape_ids = {details.get("occluding_shape_id") for details in details_list if details.get("occluding_shape_id") is not None}

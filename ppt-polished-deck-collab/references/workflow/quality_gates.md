@@ -54,7 +54,7 @@ validation/
 | 层级 | Gate | 典型问题 |
 | --- | --- | --- |
 | 文件级 | `package_preflight` | `docprops_slide_count_mismatch`、`stale_section_reference`、移动端兼容风险 |
-| 结构可见层 | `structure_precheck` | `textbox_fit_failure`、`text_occluded_by_shape`、`structured_chart_label_collision_not_checked` |
+| 结构可见层 | `structure_precheck` | `textbox_fit_failure`、`text_occluded_by_shape`、`table_cell_vertical_alignment_not_centered`、`table_paragraph_special_indent`、`structured_chart_label_collision_not_checked` |
 | 成图可见层 | `render_review` | `boundary_touch_ink_bottom`、`boundary_touch_ink_right`、`flattened_graphic_internal_text_requires_review` |
 
 **同一个视觉故障可能跨层存在。** 例如图表内部标签打架，如果图表仍是结构化对象，优先在 `structure_precheck` 里处理；如果它已经压成图片，就必须进入 `render_review` 或后续 OCR 终检。
@@ -88,6 +88,8 @@ python scripts/check_pptx_package_preflight.py \
 - `text_occluded_by_shape`
 - `font_size_off_half_point_grid` / `font_size_outside_theme_scale` / `body_text_below_theme_token` / `table_font_below_theme_token`
 - `font_size_below_caption_floor` / `font_size_fragmentation`
+- `table_cell_vertical_alignment_not_centered`
+- `table_paragraph_special_indent`
 - `structured_chart_label_collision_not_checked`
 - `full_slide_picture_background_risk`
 
@@ -137,7 +139,7 @@ python scripts/check_pptx_render_review.py \
 
 **这三个 gate 都不允许静默降级。**
 - `error`：默认阻断后续流程。
-- `warning`：允许继续，但必须进入 review note。
+- `warning`：允许继续，但默认应修复；有模板、业务语义或版式理由保留时，必须进入 review note。
 - `not_checked`：必须显式写入报告，供后续 `render_review`、preview review 或 OCR 终检接手。
 
 **不要把 `not_checked` 当成通过。** 它只表示“当前 gate 没能力判断”，不表示“当前页面没有问题”。
@@ -148,7 +150,9 @@ python scripts/check_pptx_render_review.py \
 
 **模块级 validation 不能替代 deck 级 gate。** connector 通过不代表文件能在移动端打开；逐页 preview 正常也不代表 `docProps` 和 `sectionLst` 一致；结构预检通过也不代表图片内部标签没有互相打架。
 
-**typography 与 table profile 需要进入 visual review。** 中文正式材料的宋体 / Times 字体槽、正文段落、表格上下居中、表头居中和财务数值右对齐可以作为后续结构检查增强，但当前 gate 仍以 fail-fast 为主。研报质感、版心纪律、图号单位和免责声明位置应在 preview contact sheet 与人工 visual review 中确认，不能仅凭 `render_review` 通过就把最终 PPTX 放入 `final/`。
+**typography 与 table profile 需要同时进入自动 gate 和 visual review。** 中文正式材料的宋体 / Times 字体槽、正文段落、表格字号、表格上下居中和表格特殊缩进已经由 `structure_precheck` 提供结构层 warning；表头居中、文本 / 数值水平对齐、研报质感、版心纪律、图号单位和免责声明位置仍应在 preview contact sheet 与人工 visual review 中确认，不能仅凭 `render_review` 通过就把最终 PPTX 放入 `final/`。
+
+**表格格式 warning 是 advisory。** `table_cell_vertical_alignment_not_centered` 与 `table_paragraph_special_indent` 不阻断交付，但默认应在当前修订轮处理。外部模板有明确单元格垂直对齐规则，或单元格承载大段连续文本并确实需要首行缩进时，可以记录例外并继续。
 
 **typography token 要被抽查兑现。** visual review 应抽查封面、章节页、正文页、图表页和表格页，确认 hero / section / page title / subtitle / body / label / caption / table 文本符合 `theme_tokens`。低于 `body_font_pt` 的正文、低于 `table_font_pt` 的表格、碎片化字号和临时字体切换都应记录为 warning 或 preference fix，不能被当成自然排版差异。
 

@@ -109,6 +109,10 @@
 
 **表格语义需要显式传入。** `table-native` 页应在 build 脚本或页面 spec 中声明 `numeric_columns`、`index_columns`、`text_columns` 或等价字段。表头默认居中，index / 类目列和文本列居左，财务数值列靠右，所有单元格上下居中。不要只靠“第几列以后都是数字”的隐式推断，除非该表非常小且已在代码里写清楚例外。
 
+**表格单元格要显式上下居中。** 构建脚本应对每个非空单元格设置 `cell.vertical_anchor = MSO_VERTICAL_ANCHOR.MIDDLE`。`None`、`top`、`bottom` 等状态会在 `structure_precheck` 中生成 `table_cell_vertical_alignment_not_centered` warning；warning 允许继续，但默认应修复，模板确有特殊表格规则时才记录例外。
+
+**表格段落缩进要显式归零。** PPT 段落 API 暴露 `level`，底层 `a:pPr` 还可能保存 `marL`、`marR` 与 `indent`。构建脚本应把表格单元格内段落的 `level` 设为 `0`，并移除或归零这些 OOXML 缩进属性；`structure_precheck` 检出非零值时生成 `table_paragraph_special_indent` warning。只有单元格承载大段连续文本且版式确实需要首行缩进时，才保留并写入 review note。
+
 ## 技术选择查表
 
 | 页面特征 | 推荐技术模块 | 原因 | 不推荐路线 |
@@ -136,7 +140,7 @@
 | `diagram-visual` | 逐页预览图 + 主路径人工复核 |
 | `office-chart-native` | 逐页预览图 + 图表可编辑性确认 |
 | `python-figure-image` | 逐页预览图 + 比例 / 清晰度检查 |
-| `table-native` | 逐页预览图 + 表格列语义、上下居中、表头居中、文本 / 数值对齐人工复核 |
+| `table-native` | `structure_precheck` 表格格式 warning + 逐页预览图 + 表格列语义、表头居中、文本 / 数值对齐人工复核 |
 | `icon-accent` | 逐页预览图 + 颜色 / 对比度检查 |
 | `image-generation` | prompt 文档 + 生成参数 / backend + 输出文件 + 事实 / 文字 / 安全区复核 |
 

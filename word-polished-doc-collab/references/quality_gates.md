@@ -30,12 +30,16 @@
 - 表格正文是否为 `10.5pt` 或 `9pt`
 - 表题是否加粗
 - 表格段前段后是否为 `0`
+- 表格单元格段落的首行/悬挂/左右缩进是否为 `0`
+- 表格单元格内容是否上下居中
 - 表头是否居中、左侧索引列是否左对齐、右侧数值列是否右对齐
 - 表题、图题、表注、图注和来源说明的位置与段距是否符合 active `caption_policy`
 
 **字号提醒分 source 层和产物层。** `lint_doc_markdown.py` 会扫描 Markdown、meta、asset manifest 和 workspace scripts 中的显式字号 literal，用来捕捉 `Pt(9.6)`、`font_size: 11.3` 这类构建源问题；`run_docx_qa.py` 会扫描 DOCX 产物里的可见字号漂移。两层都进入统一 `.agent_reminder`，完整证据留在 JSON。
 
 **字号提醒不默认阻断。** source/config literal、非半点配置、profile 外临时档位和字号碎片化进入 advisory；role/profile 的硬契约偏离仍由 `style_contract` 判定失败。也就是说，同一字号异常可以同时产生一个 `typography.font_size.*` advisory 和一个 `typography.paragraph.style_contract_drift` hard block，Agent 先修 hard block，再处理或记录字号 advisory。
+
+**表格 warning 表示默认应修复的契约偏离。** 非零特殊缩进和未上下居中分别进入聚合 warning，且不改变 `passed_all_checks`。Agent 默认修复；长文本单元格、外部模板或其他明确业务理由可以作为例外，保留时必须在 handoff 或复核记录中说明理由。
 
 ## Gate 3: Font Slot Integrity
 

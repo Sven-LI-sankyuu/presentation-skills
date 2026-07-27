@@ -13,7 +13,9 @@
 3. `font_size_off_half_point_grid` / `font_size_outside_theme_scale`
 4. `body_text_below_theme_token` / `table_font_below_theme_token`
 5. `font_size_fragmentation`
-6. `structured_chart_label_collision_not_checked`
+6. `table_paragraph_special_indent`
+7. `table_cell_vertical_alignment_not_centered`
+8. `structured_chart_label_collision_not_checked`
 """
 
 from __future__ import annotations
@@ -31,6 +33,8 @@ from ppt_quality_helpers import (
     RectPt,
     collect_font_size_occurrences,
     collect_shape_inventory,
+    collect_table_cell_format_records,
+    collect_table_paragraph_format_records,
     collect_text_items,
     dump_json,
     estimate_text_layout_metrics,
@@ -44,6 +48,7 @@ FULL_SLIDE_PICTURE_COVERAGE_THRESHOLD = 0.95
 FONT_SIZE_GRID_PT = 0.5
 FONT_SIZE_GRID_TOLERANCE_PT = 0.02
 FONT_SIZE_FRAGMENTATION_LIMIT = 10
+TABLE_VERTICAL_ANCHOR_EXPECTED = "middle"
 DEFAULT_FONT_SIZE_POLICY = {
     "typography_profile": "cn_song_times",
     "latin_font_name": "Times New Roman",
@@ -599,6 +604,80 @@ def font_size_quality_issues(font_occurrences, policy: dict) -> list[QualityIssu
     return issues
 
 
+def table_cell_vertical_alignment_issues(table_cell_records) -> list[QualityIssue]:
+    """检查表格单元格内容是否显式上下居中。"""
+
+    issues: list[QualityIssue] = []
+    for record in table_cell_records:
+        if record.vertical_anchor == TABLE_VERTICAL_ANCHOR_EXPECTED:
+            continue
+        issues.append(
+            QualityIssue(
+                severity="warning",
+                issue_type="table_cell_vertical_alignment_not_centered",
+                message="表格单元格内容没有设置为上下居中。",
+                slide_number=record.slide_number,
+                shape_id=record.owner_shape_id,
+                source_kind="table_cell",
+                details={
+                    "shape_name": record.owner_shape_name,
+                    "table_index_on_slide": record.table_index_on_slide,
+                    "row": record.row,
+                    "col": record.col,
+                    "actual_vertical_anchor": record.vertical_anchor,
+                    "expected_vertical_anchor": TABLE_VERTICAL_ANCHOR_EXPECTED,
+                    "text_preview": record.text_preview,
+                    "is_merge_origin": record.is_merge_origin,
+                    "is_spanned": record.is_spanned,
+                    "span_width": record.span_width,
+                    "span_height": record.span_height,
+                },
+                suggested_fix=(
+                    "将单元格 vertical_anchor 显式设为 MSO_VERTICAL_ANCHOR.MIDDLE；"
+                    "如外部模板确有特殊表格规则，确认后记录例外。"
+                ),
+            )
+        )
+    return issues
+
+
+def table_paragraph_special_indent_issues(table_paragraph_records) -> list[QualityIssue]:
+    """检查表格单元格段落是否存在非零特殊缩进。"""
+
+    issues: list[QualityIssue] = []
+    for record in table_paragraph_records:
+        if not record.nonzero_indents:
+            continue
+        issues.append(
+            QualityIssue(
+                severity="warning",
+                issue_type="table_paragraph_special_indent",
+                message="表格单元格段落存在非零特殊缩进，可能误继承了正文或列表格式。",
+                slide_number=record.slide_number,
+                shape_id=record.owner_shape_id,
+                source_kind="table_paragraph",
+                details={
+                    "shape_name": record.owner_shape_name,
+                    "table_index_on_slide": record.table_index_on_slide,
+                    "row": record.row,
+                    "col": record.col,
+                    "paragraph": record.paragraph,
+                    "paragraph_level": record.paragraph_level,
+                    "paragraph_margin_left_pt": record.paragraph_margin_left_pt,
+                    "paragraph_margin_right_pt": record.paragraph_margin_right_pt,
+                    "paragraph_indent_pt": record.paragraph_indent_pt,
+                    "nonzero_indents": record.nonzero_indents,
+                    "text_preview": record.text_preview,
+                },
+                suggested_fix=(
+                    "表格内容默认将 paragraph level、marL、marR 和 indent 归零；"
+                    "如果该单元格确实包含需要首行缩进的大段连续文本，确认版式后保留并记录例外。"
+                ),
+            )
+        )
+    return issues
+
+
 def main() -> int:
     """执行 structure precheck。"""
     args = parse_args()
@@ -618,6 +697,8 @@ def main() -> int:
     shape_inventory = collect_shape_inventory(prs)
     text_items = collect_text_items(prs)
     font_occurrences = collect_font_size_occurrences(prs)
+    table_cell_records = collect_table_cell_format_records(prs)
+    table_paragraph_records = collect_table_paragraph_format_records(prs)
     font_size_policy = resolve_font_size_policy(args.workspace_dir)
     issues: list[QualityIssue] = []
 
@@ -628,6 +709,8 @@ def main() -> int:
 
     issues.extend(structured_object_overlap_issues(shape_inventory))
     issues.extend(font_size_quality_issues(font_occurrences, font_size_policy))
+    issues.extend(table_cell_vertical_alignment_issues(table_cell_records))
+    issues.extend(table_paragraph_special_indent_issues(table_paragraph_records))
     issues.extend(
         full_slide_picture_background_issues(
             shape_inventory,
@@ -692,6 +775,8 @@ def main() -> int:
                 "shape_count": len(shape_inventory),
                 "text_item_count": len(text_items),
                 "explicit_font_size_occurrence_count": len(font_occurrences),
+                "table_cell_format_record_count": len(table_cell_records),
+                "table_paragraph_format_record_count": len(table_paragraph_records),
             },
             "font_size_policy": font_size_policy,
         },
@@ -705,6 +790,8 @@ def main() -> int:
                 "pptx": str(pptx_path.resolve()),
                 "shape_inventory": [asdict(record) for record in shape_inventory],
                 "text_items": [asdict(item) for item in text_items],
+                "table_cell_formats": [asdict(record) for record in table_cell_records],
+                "table_paragraph_formats": [asdict(record) for record in table_paragraph_records],
             },
         )
         print(f"[INFO] 写入 inventory: {args.inventory_out}")

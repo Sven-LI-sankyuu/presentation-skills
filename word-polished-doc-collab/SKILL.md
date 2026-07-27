@@ -56,7 +56,7 @@ description: Use when collaborating with humans to turn Markdown, DOCX, and stru
 4. **再做显式版式映射**
 - 正文默认 `小四 12pt`，中文 `宋体`，英文 `Times New Roman`，首行缩进 `2` 字符。
 - 正文和标题默认 `1.5` 倍行距，段前段后统一按 `0.5` 行落地。
-- 表格正文默认 `五号 10.5pt`，密表允许降到 `小五 9pt`，段前段后 `0`，表头居中、左侧索引列左对齐、右侧数值列右对齐。
+- 表格正文默认 `五号 10.5pt`，密表允许降到 `小五 9pt`，段前段后与首行/悬挂/左右缩进均为 `0`，单元格内容上下居中；表头水平居中、左侧索引列左对齐、右侧数值列右对齐。
 - `cn_song_times` 默认使用“表题在表上方且加粗、图题在图下方、表注在表下方”的中文正式文档规则；如果 active `style_profile` 或 preset 显式覆盖 `figure_title` 位置，就必须让构建与 QA 一起跟随 `caption_policy` 落地。
 
 5. **轻量模式默认不做 review**
@@ -81,7 +81,7 @@ description: Use when collaborating with humans to turn Markdown, DOCX, and stru
 4. **再做显式版式映射**
 - 正文默认 `小四 12pt`，中文 `宋体`，英文 `Times New Roman`，首行缩进 `2` 字符。
 - 正文和标题默认 `1.5` 倍行距，段前段后统一按 `0.5` 行落地。
-- 表格正文默认 `五号 10.5pt`，密表允许降到 `小五 9pt`，段前段后 `0`，表头居中、左侧索引列左对齐、右侧数值列右对齐。
+- 表格正文默认 `五号 10.5pt`，密表允许降到 `小五 9pt`，段前段后与首行/悬挂/左右缩进均为 `0`，单元格内容上下居中；表头水平居中、左侧索引列左对齐、右侧数值列右对齐。
 - `cn_song_times` 默认使用“表题在表上方且加粗、图题在图下方、表注在表下方”的中文正式文档规则；如果 active `style_profile` 或 preset 显式覆盖 `figure_title` 位置，就必须让构建与 QA 一起跟随 `caption_policy` 落地。
 
 5. **再接 Python 图表或 Office 原生图表 / 插图**
@@ -95,6 +95,7 @@ description: Use when collaborating with humans to turn Markdown, DOCX, and stru
 - 字号 QA 同时检查 source/config 层 literal、DOCX 产物层 role/profile 漂移、profile 外临时档位、字号碎片化和半点网格。Word 字号底层按半点表达，因此整数与 `10.5pt` 合法，`9.6pt`、`11.3pt` 这类配置应提醒；能解析 active role 时优先直接收敛到 active `style_profile` 的默认 token，例如中文正文回 `cn_song_times.body=12pt`。
 - 字号 observation 默认是 advisory；如果同一异常导致段落 `style_contract`、字体槽位、表格契约或 visual review gate 失败，对应 contract finding 仍会独立 hard block。Agent 应先修 hard block，再处理或记录字号 advisory。
 - 提醒必须按问题类型聚合、统计 occurrence 数并只保留少量代表位置，不能把每个 run 展开成重复长列表。
+- 表格缩进和单元格垂直对齐属于默认契约：QA 检测到偏离时输出 warning，Agent 默认修复；存在长文本单元格、外部模板或其他明确版式理由时，可以记录理由并保留例外。warning 不改变 `passed_all_checks`。
 - `lint_doc_markdown.py` 和 `run_docx_qa.py` 会在原 JSON / Markdown 报告旁生成 `.agent_reminder.json` 与 `.agent_reminder.md`。Agent 必须先读 reminder 的 `decision`、`groups`、`suggested_fix`、`sample_locations` 和 `full_report_ref`，只有需要完整证据时再打开 full report。
 - 没有视觉复核或结构核对的 `.docx` 不算完成。
 
@@ -128,7 +129,7 @@ description: Use when collaborating with humans to turn Markdown, DOCX, and stru
 - 标题字号必须随层级单调递减，不能出现二级标题比一级标题更大。
 - 字号默认服从 active `style_profile` 并使用 `0.5pt` 网格；非半点小数、局部覆盖和过多临时档位必须进入聚合 warning，模板或 preset 例外应先写入 profile。
 - 字号 reminder 必须显示 active profile 的默认推荐值；例如中文 `cn_song_times.body` 推荐 `12pt`，英文 `teal_consulting_report.body` 推荐 `9pt`，英文 `red_private_equity_report.body` 推荐 `10pt`。中文任务中的英文单词仍使用中文 profile 的字号 token。
-- 表格正文默认使用 `五号 10.5pt`，确有密度压力时才降到 `小五 9pt`，表头默认居中、左侧索引列左对齐、右侧数值列右对齐。
+- 表格正文默认使用 `五号 10.5pt`，确有密度压力时才降到 `小五 9pt`；单元格段落默认无特殊缩进，内容默认上下居中，表头水平居中、左侧索引列左对齐、右侧数值列右对齐。
 - `cn_song_times` 默认表题在表上方且加粗，图题在图下方，表注在表下方。其他 preset 或 style profile 可以显式覆盖 `figure_title` 的位置，但必须在 profile 和 QA 中写清楚。
 - 轻量模式默认不附带 review 记录；精细模式默认必须带 `validation_bundle`，并且让 QA 跟随 active `style_profile` 与 `asset_manifest`（若存在）执行。
 - 没有显式设置 `ascii/hAnsi/eastAsia/cs` 字体槽位的构建结果，不应被当作“格式已锁定”。

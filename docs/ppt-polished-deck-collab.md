@@ -35,17 +35,17 @@
 | [![Apple editorial ink Services margin page](../demos/apple-editorial-ink-native/build/rendered/ppt_preview/slide_005.png)](../demos/apple-editorial-ink-native/README.md) | [![Apple FY2025 revenue and net-income page](../demos/apple-financial-report-review/build/rendered/ppt_preview/slide_003.png)](../demos/apple-financial-report-review/README.md) |
 | native shape chart、大号衬线数字、浅灰动态线和克制强调色。 | 原生 Office chart、图题、单位、来源注和研报版心。 |
 
-| Strategy framework page | Data pipeline page |
+| Data pipeline page | Product structure page |
 | --- | --- |
-| [![Standard Wars framework page](../old/demos/standard-wars-executive-deck/build/rendered/ppt_preview/slide_003.png)](../old/demos/standard-wars-executive-deck/README.md) | [![Apple editorial ink data pipeline page](../demos/apple-editorial-ink-native/build/rendered/ppt_preview/slide_008.png)](../demos/apple-editorial-ink-native/README.md) |
-| connector-backed framework route, suitable for editable executive diagrams. | 从 SEC API、10-K HTML、抽取脚本到 native PPTX 的可复跑数据链路。 |
+| [![Apple editorial ink data pipeline page](../demos/apple-editorial-ink-native/build/rendered/ppt_preview/slide_008.png)](../demos/apple-editorial-ink-native/README.md) | [![Apple editorial ink iPhone and Services page](../demos/apple-editorial-ink-native/build/rendered/ppt_preview/slide_004.png)](../demos/apple-editorial-ink-native/README.md) |
+| 从 SEC API、10-K HTML、抽取脚本到 native PPTX 的可复跑数据链路。 | iPhone 与 Services 放在同一页解释，展示阅读型证据和演讲型页面节奏的结合。 |
 
 ## Gallery：更多 deck 类型
 
-| Strategy narrative deck | Research chart page |
+| 正式财报 deck | 单页财务证据 |
 | --- | --- |
-| [![Standard Wars executive deck contact sheet](../assets/standard-wars-executive-deck_contact-sheet.png)](../old/demos/standard-wars-executive-deck/README.md) | [![Apple FY2025 revenue and net-income page](../assets/apple-financial-report-review_revenue-page.png)](../demos/apple-financial-report-review/README.md) |
-| 归档但仍有展示价值的策略叙事 demo，包含管理层问题、结构图、比较矩阵和决策逻辑。 | 财务证据页示例，展示 chart spotlight、图题、单位、来源和摘要判断如何组合。 |
+| [![Apple FY2025 financial report review contact sheet](../assets/apple-financial-report-review_contact-sheet.png)](../demos/apple-financial-report-review/README.md) | [![Apple FY2025 revenue and net-income page](../assets/apple-financial-report-review_revenue-page.png)](../demos/apple-financial-report-review/README.md) |
+| 正式中文财报点评 demo，展示 Office 原生图表、原生表格、来源注、免责声明和完整验证证据链。 | 财务证据页示例，展示 chart spotlight、图题、单位、来源和摘要判断如何组合。 |
 
 ## 工作流
 
@@ -98,7 +98,6 @@ flowchart LR
 
 - `../demos/apple-editorial-ink-native/`：Apple editorial ink native test，展示强视觉风格迁移与 native PPTX 表达。
 - `../demos/apple-financial-report-review/`：Apple FY2025 financial report review，展示正式财报点评、Office 原生图表和验证链路。
-- `../old/demos/standard-wars-executive-deck/`：归档策略叙事 demo，展示 executive deck 与管理层问题表达。
 
 ## 入口文件
 
