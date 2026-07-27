@@ -48,6 +48,7 @@
   </tr>
 </table>
 
+<br/>
 
 ## 产品逻辑：用真实办公经验约束模型输出
 
@@ -59,6 +60,35 @@
 | `word-polished-doc-collab` | 正式报告、董事会附件、研究附录、制度文档、咨询风格 Word 交付 | 中文轻量正式报告 + 英文精细咨询报告，包含 preview 和 QA bundle |
 | `web-demo-video-synthesis` | 产品 walkthrough、网页 demo、带旁白解释视频、可发布短视频 | 网页、配音、字幕、录屏和最终 MP4 的端到端流水线 |
 | `xhs-markdown-card-collab` | 从 Markdown 生成可发布的小红书图文卡片、研究/招聘帖子、结构化笔记型内容 | 导出的虚构 demo 成品，包含 PNG 卡片、预览 HTML、metadata JSON，以及在锁定字号合同下的主题变化示例 |
+
+<br/>
+
+## 30 秒开始
+
+可以直接把仓库链接发给 Agent，并要求它安装 PPT skill：
+
+```text
+请打开 https://github.com/Sven-LI-sankyuu/presentation-skills/ ，安装其中的 ppt-polished-deck-collab skill。
+```
+
+下载最新 skill zip：[GitHub Releases](https://github.com/Sven-LI-sankyuu/presentation-skills/releases/latest)
+
+如果下载的是总包，解压到 Codex skills 目录：
+
+```bash
+mkdir -p ~/.codex/skills
+unzip presentation-skills-all-skills-*.zip -d ~/.codex/skills
+```
+
+安装后直接对 Agent 说：
+
+```text
+请使用 ppt-polished-deck-collab，帮我把这份材料做成一套正式、可编辑、需要导出预览并完成 QC 的 PPT。
+```
+
+也可以把 `ppt-polished-deck-collab` 换成 `word-polished-doc-collab`、`web-demo-video-synthesis` 或 `xhs-markdown-card-collab`。
+
+<br/>
 
 ## PowerPoint Decks
 

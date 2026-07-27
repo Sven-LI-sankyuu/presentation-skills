@@ -49,6 +49,8 @@
   </tr>
 </table>
 
+<br/>
+
 ## Product Logic: Constrain Model Output with Real Office Experience
 
 As model capability improves, models will become increasingly fluent at using code tools to operate carriers such as PPT and Word directly. But PPT, Word, and even web video recording are more of a product problem. Improvements in model reasoning and coding ability do not naturally make models understand human office needs for PPT, such as specific typography information like fonts and line spacing, and more detailed text-writing logic and standards. The main creator of this skill has work experience in institutions such as large securities firms and private investment funds, and has solidified these experiences and logic into specifications and quality checks, so as to constrain models to produce PPT, Word, and video deliverables that better match real work needs. This is the core value of this skill.
@@ -59,6 +61,35 @@ As model capability improves, models will become increasingly fluent at using co
 | `word-polished-doc-collab` | Formal reports, board attachments, research appendices, policy docs, consulting-style Word deliverables | Lightweight Chinese report plus refined English consulting report with preview and QA bundle |
 | `web-demo-video-synthesis` | Product walkthroughs, narrated web demos, short-form explainers, publishable demo videos | End-to-end webpage, voiceover, subtitles, screen recording, and final MP4 pipeline |
 | `xhs-markdown-card-collab` | Publishable Xiaohongshu image-card posts from Markdown, research/job posts, structured note-style social content | Demo bundles with PNG cards, preview HTML, metadata JSON, and theme variation under a locked typography contract |
+
+<br/>
+
+## 30-Second Start
+
+You can send the repository link directly to your agent and ask it to install the PPT skill:
+
+```text
+Please open https://github.com/Sven-LI-sankyuu/presentation-skills/ and install the ppt-polished-deck-collab skill from it.
+```
+
+Download the latest skill zip: [GitHub Releases](https://github.com/Sven-LI-sankyuu/presentation-skills/releases/latest)
+
+If you download the all-skills package, unzip it into the Codex skills directory:
+
+```bash
+mkdir -p ~/.codex/skills
+unzip presentation-skills-all-skills-*.zip -d ~/.codex/skills
+```
+
+After installation, tell your agent:
+
+```text
+Use ppt-polished-deck-collab to turn this material into a formal, editable PPT that exports previews and completes QC.
+```
+
+You can also replace `ppt-polished-deck-collab` with `word-polished-doc-collab`, `web-demo-video-synthesis`, or `xhs-markdown-card-collab`.
+
+<br/>
 
 ## PowerPoint Decks
 
