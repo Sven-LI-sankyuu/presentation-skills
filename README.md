@@ -35,7 +35,7 @@
       Covers research reports, management briefings, technical proposals, defenses, product demos, keynote-style talks, and template-driven business materials, with separate handling for reading decks and speaking decks.
     </td>
     <td width="25%">
-      <strong>✏️ Keeps Office editability</strong><br/>
+      <strong>✏️ Original Office editability</strong><br/>
       Prioritizes native PowerPoint / Word text, shapes, tables, charts, and necessary connectors, so teams can revise copy, numbers, and layouts after handoff.
     </td>
     <td width="25%">

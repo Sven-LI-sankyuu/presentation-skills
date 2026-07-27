@@ -34,7 +34,7 @@
       覆盖研报、管理汇报、技术方案、答辩、产品演示、演讲分享和模板化商业材料，并区分阅读型 deck 与演讲型 deck。
     </td>
     <td width="25%">
-      <strong>✏️ 保留 Office 可编辑性</strong><br/>
+      <strong>✏️ 原生 Office 可编辑性</strong><br/>
       优先使用 PowerPoint / Word 原生文本、形状、表格、图表和必要 connector，方便会后继续改文字、改数字和调版式。
     </td>
     <td width="25%">
