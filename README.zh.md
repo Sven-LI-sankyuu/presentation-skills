@@ -54,12 +54,12 @@
 
 模型能力的提升会让模型在直接使用代码工具操作ppt和word等载体的时候越来越得心应手, 但是PPT, word, 乃至网页视频录制, 更多的是一个产品问题. 模型的推理能力和代码能力的提高并不会让他们自然地掌握人类在办公中的PPT需求, 例如特定的字体和行距等排版信息, 和更细致的文本写作逻辑规范等. 本skill的主创有在大型券商和私募投资基金等机构的工作经验, 将这些经验和逻辑, 以规范和质检的形式固化, 以约束模型产生更符合实际工作需求的PPT, word和视频交付物. 这就是这个skill的核心价值.
 
-| Skill | 适合场景 | Demo 亮点 |
+| Skill | 适合场景 | 产品 / 技术亮点 |
 | --- | --- | --- |
-| `ppt-polished-deck-collab` | 可编辑研报、executive deck、策略汇报、技术说明、演讲分享、模板化商业材料 | 两套 Apple 财报分析 deck 使用相近主题，却呈现正式研报版与艺术化 editorial ink 原生 PPTX 版两种完全不同表达 |
-| `word-polished-doc-collab` | 正式报告、董事会附件、研究附录、制度文档、咨询风格 Word 交付 | 中文轻量正式报告 + 英文精细咨询报告，包含 preview 和 QA bundle |
-| `web-demo-video-synthesis` | 产品 walkthrough、网页 demo、带旁白解释视频、可发布短视频 | 网页、配音、字幕、录屏和最终 MP4 的端到端流水线 |
-| `xhs-markdown-card-collab` | 从 Markdown 生成可发布的小红书图文卡片、研究/招聘帖子、结构化笔记型内容 | 导出的虚构 demo 成品，包含 PNG 卡片、预览 HTML、metadata JSON，以及在锁定字号合同下的主题变化示例 |
+| `ppt-polished-deck-collab` | 可编辑研报、executive deck、策略汇报、技术说明、演讲分享、模板化商业材料 | 把 brief、页面叙事、slide specs、原生图表 / 表格、预览导出和三层 QC 串成完整 deck workflow，重点减少字体漂移、文本溢出、表格不居中和不可编辑截图 |
+| `word-polished-doc-collab` | 正式报告、董事会附件、研究附录、制度文档、咨询风格 Word 交付 | 固化中文正式文档和英文咨询报告的字体、字号、行距、段前段后、题注、表格缩进和上下居中规则，让 DOCX 更像可审阅的办公文件 |
+| `web-demo-video-synthesis` | 产品 walkthrough、网页 demo、带旁白解释视频、可发布短视频 | 把脚本、分段配音、timeline、浏览器录屏、字幕和 ffmpeg 合成拆开管理，支持局部重跑和音画同步检查 |
+| `xhs-markdown-card-collab` | 从 Markdown 生成可发布的小红书图文卡片、研究/招聘帖子、结构化笔记型内容 | 用 YAML front matter、浏览器真实排版、分页 QA 和主题约束控制手机端可读性，避免长文硬塞成不可读截图 |
 
 <br/>
 

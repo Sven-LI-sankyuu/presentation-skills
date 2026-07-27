@@ -55,12 +55,12 @@
 
 As model capability improves, models will become increasingly fluent at using code tools to operate carriers such as PPT and Word directly. But PPT, Word, and even web video recording are more of a product problem. Improvements in model reasoning and coding ability do not naturally make models understand human office needs for PPT, such as specific typography information like fonts and line spacing, and more detailed text-writing logic and standards. The main creator of this skill has work experience in institutions such as large securities firms and private investment funds, and has solidified these experiences and logic into specifications and quality checks, so as to constrain models to produce PPT, Word, and video deliverables that better match real work needs. This is the core value of this skill.
 
-| Skill | Best For | Demo Signal |
+| Skill | Best For | Product / Technical Highlights |
 | --- | --- | --- |
-| `ppt-polished-deck-collab` | Editable research reports, executive decks, strategy narratives, technical explainers, keynote-style talks, template-driven business decks | Two Apple financial-analysis decks with the same source theme but very different presentation languages: formal research-report style and editorial-ink native PPTX style |
-| `word-polished-doc-collab` | Formal reports, board attachments, research appendices, policy docs, consulting-style Word deliverables | Lightweight Chinese report plus refined English consulting report with preview and QA bundle |
-| `web-demo-video-synthesis` | Product walkthroughs, narrated web demos, short-form explainers, publishable demo videos | End-to-end webpage, voiceover, subtitles, screen recording, and final MP4 pipeline |
-| `xhs-markdown-card-collab` | Publishable Xiaohongshu image-card posts from Markdown, research/job posts, structured note-style social content | Demo bundles with PNG cards, preview HTML, metadata JSON, and theme variation under a locked typography contract |
+| `ppt-polished-deck-collab` | Editable research reports, executive decks, strategy narratives, technical explainers, keynote-style talks, template-driven business decks | Connects brief, page narrative, slide specs, native charts / tables, preview export, and three-layer QC into a full deck workflow, with emphasis on reducing font drift, text overflow, uncentered tables, and non-editable screenshots |
+| `word-polished-doc-collab` | Formal reports, board attachments, research appendices, policy docs, consulting-style Word deliverables | Encodes typography, font size, line spacing, paragraph spacing, captions, table indentation, and vertical-centering rules for Chinese formal documents and English consulting reports, making DOCX output closer to review-ready office files |
+| `web-demo-video-synthesis` | Product walkthroughs, narrated web demos, short-form explainers, publishable demo videos | Splits scripts, segmented voiceover, timeline, browser recording, subtitles, and ffmpeg composition into manageable assets, supporting partial reruns and audio-video sync checks |
+| `xhs-markdown-card-collab` | Publishable Xiaohongshu image-card posts from Markdown, research/job posts, structured note-style social content | Uses YAML front matter, real browser layout, pagination QA, and theme constraints to control mobile readability and avoid turning long text into unreadable screenshots |
 
 <br/>
 
