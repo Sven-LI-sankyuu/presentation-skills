@@ -8,6 +8,8 @@
 
 ## 总原则
 
+**先过 workflow gate，再选择或执行 build route。** 新 deck 与重大重构在资产生产或 PPT 组装前运行 `python scripts/validate_workflow_gate.py --workspace-dir <workspace> --target build --require-workflow`。该命令失败时，不得以切换 backend、直接写脚本或生成占位 PPT 绕过大纲批准。
+
 **路线是可选型的，不是写死的。** 新 skill 不应把某一条技术路线当成唯一正解，而应在环境、模板约束、可编辑性要求和后续维护成本之间做选择。
 
 **PowerPoint 交互技术路线优先继承旧 skill。** 现有 `python-pptx`、真绑定 connector、解析 `pptx` XML 校验、PowerPoint -> PDF -> PNG 这些成熟经验应直接复用。

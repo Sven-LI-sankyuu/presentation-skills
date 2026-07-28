@@ -29,6 +29,13 @@ deck:
   density_profile: "balanced_brief"
   editability_profile: "fully_editable"
   template_file: null
+  personalization:
+    speaker_or_brand_voice: null
+    desired_impression: null
+    must_emphasize: []
+    must_avoid: []
+    visual_likes: []
+    visual_dislikes: []
   theme_tokens:
     typography_profile: "zh_formal"
     domain_profile: null
@@ -73,11 +80,35 @@ deck:
 
 **`editability_profile`。** 推荐值：`fully_editable`、`chart_editable`、`mixed_assets`、`snapshot_allowed`。
 
+**`personalization`。** 可选且向后兼容的 mapping，用于记录 Grill-Me 中无法由现有 profile 完整表达的个性化护栏。能够映射到 `audience`、`scenario`、`objective`、现有 profile、`theme_tokens` 或资产路线的答案仍写入原字段，不重复创建平行字段。旧 workspace 可以省略整个 mapping。
+
 **`theme_tokens.domain_profile`。** 推荐值按任务扩展，例如 `financial_report_review`。它用于表达研报、财报点评等行业文体纪律，可以和 `visual_profile: editorial_ink` 或 `swiss_modernist` 同时存在。
 
 **`theme_tokens.visual_theme_preset`。** 可选字段，用于记录少数经过验证的视觉主题预设，例如 `editorial_ink_indigo_porcelain`、`editorial_ink_kraft`、`swiss_ikb`、`swiss_safety_orange`。它不开放任意配色自由，主要服务复现与 review。
 
 **`theme_tokens` 是正式 deck 的排版合同。** build 前应已经锁定标题、正文、标签、图注和表格 token。构建脚本应读取或显式映射这些 token；低于 `body_font_pt` 或 `table_font_pt` 的正文 / 表格文字属于 review 风险，不能用来常规解决空间不足。
+
+## `workflow`
+
+`workflow` 是 `deck_narrative.md` frontmatter 的顶层 mapping，记录 Grill-Me 与五阶段生产的执行状态。它不属于 `deck_contract`，也不改变旧 workspace 的 deck schema。
+
+```yaml
+workflow:
+  version: 1
+  state: "questioning"
+  outline_version: null
+  approval:
+    status: "pending"
+    outline_version: null
+    evidence: null
+    approved_at: null
+```
+
+**状态。** 只允许 `questioning`、`outline_ready`、`awaiting_outline_feedback`、`outline_approved`、`executing`、`reviewing`、`revising`、`final`、`blocked`、`stopped`。
+
+**批准绑定版本。** `outline_version` 在完整大纲首次生成时赋值，实质修改后递增。完整 build 前，`approval.status` 必须为 `approved`，`approval.outline_version` 必须等于当前 `outline_version`，`approval.evidence` 必须保存用户对当前完整大纲的明确批准原话或持久化引用。大纲发生实质修改时，将批准重置为 `pending`。
+
+**兼容性。** 旧 workspace 缺少 `workflow` 时，验证脚本默认给出 warning；新 deck 和重大重构必须使用 `--require-workflow`，缺少该 mapping 时阻断 build。
 
 ## `slide_contract`
 

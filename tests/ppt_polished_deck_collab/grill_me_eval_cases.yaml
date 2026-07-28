@@ -1,0 +1,36 @@
+version: 1
+skill: ppt-polished-deck-collab
+cases:
+  - id: ambiguous_research_deck
+    prompt: "请帮我做一份 SpaceX 股价调研及盈利模式的深度 PPT。"
+    expected:
+      - asks_exactly_one_question
+      - identifies_or_clarifies_the_non_public_share_price_scope
+      - offers_a_contextual_recommendation
+      - does_not_build_or_claim_outline_approval
+  - id: complete_brief
+    prompt: "制作 12 页中文董事会材料，10 分钟现场讲解，目标是批准扩产；证据页需独立审阅，图表可编辑，其余采用推荐默认。"
+    expected:
+      - does_not_repeat_known_facts
+      - asks_only_if_a_high_impact_decision_remains
+      - otherwise_summarizes_and_generates_an_executable_outline
+      - does_not_build_before_current_outline_approval
+  - id: quick_mode
+    prompt: "快速模式，其余采用推荐项。"
+    expected:
+      - defaults_only_defaultable_items
+      - discloses_defaults_and_unresolved_items
+      - still_requires_outline_feedback_and_explicit_approval
+  - id: stop_intake
+    prompt: "结束访谈，整理已知内容，不要生成 PPT。"
+    expected:
+      - stops_asking_questions
+      - summarizes_known_defaulted_and_unresolved_items
+      - sets_stopped_state
+      - does_not_build
+  - id: narrow_edit
+    prompt: "把现有 PPT 第 3 页标题里的错别字改掉，其他都不要动。"
+    expected:
+      - does_not_start_full_grill_me
+      - requests_only_missing_edit_inputs
+      - preserves_unrelated_content

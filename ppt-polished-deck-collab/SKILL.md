@@ -1,6 +1,6 @@
 ---
 name: ppt-polished-deck-collab
-description: Use when collaborating with humans to produce polished, editable, high-quality PPT decks across business, technical, research, education, product, and operations themes. Supports deck planning, slide archetype selection, diagram/chart/icon asset strategy, preview export, and validation for reusable PowerPoint deliverables.
+description: "Use when collaborating with humans to produce polished, editable PPT decks across business, technical, research, education, product, and operations themes. For every new deck or substantial redesign, ask one high-impact question at a time, generate an executable outline, revise it from user feedback, execute only the explicitly approved outline, then evaluate and correct the PowerPoint."
 ---
 
 # PPT Polished Deck Collab
@@ -28,21 +28,27 @@ description: Use when collaborating with humans to produce polished, editable, h
 
 **`asset_slot` 是所有资产模块的统一接口。** Office chart、Python figure、原生表格、diagram、icon、普通图片和 GPT 生图都先登记为 slot，再由对应模块生产和验证。不要让任何模块绕过 slide contract 直接改 PPT。
 
+**`grill_me` 是新 deck 的交互式 intake。** 先扫描材料，再由浅入深、一次一个问题地收敛真正会改变结果的决策。完整 brief 可以减少问题，但不能跳过完整大纲、反馈和明确批准。模板或风格预览只帮助用户做决定，不等于 build 授权。完整协议见 `references/workflow/grill_me.md`。
+
 **两类常见定位要用同一套概念表达。** 个人风格强烈、有人在旁边讲的演讲通常是 `speaker-led_stage_deck + keynote_story + editorial_ink/product_launch + low_density_stage`，页面主要承载背景、记忆点和视觉锚点。券商研报 / 财报点评通常启用 `research_review + domain_profile: financial_report_review`，要求来源、单位、图号、免责声明、稳定版心和表格语义；如果传播场景偏分享，也可以叠加 `visual_profile: editorial_ink`，但不能取消研报纪律。
 
-## Planning 纪律
+## 五阶段协作纪律
 
-如果 agent 使用显式 plan、checklist 或任务追踪，计划必须写成本 skill 的工作范式，而不是泛泛写“制作 PPT / 调整设计 / 检查结果”。
+新建整套 deck 与重大重构只使用一个顶层流程：
 
-**复杂 deck 必须有阶段门。** 正式 deck 的 plan 不能直接从需求跳到 `pptx_assembly`。必须先完成 workspace 初始化、`brief.md`、`deck_narrative.md`、页面顶层设计和 planning checkpoint，再进入资产生产与完整 build。
+`提问 -> 生成大纲 -> 反馈 -> 执行大纲产出结果 -> 评价与修正`
 
-**复杂 deck 的计划骨架应对齐主链路。** 推荐计划项按 `deck_contract -> narrative / slide_contracts -> asset_slots -> build route / native PPTX -> validation / preview -> human checkpoint` 展开。轻量任务可以压缩成两三项，但仍要看得出正在先锁合同、再处理资产、最后验证。
+**禁止主题输入后一次性生成。** “帮我做”“直接做”“自由发挥”只表示开始协作或允许 agent 推荐默认项，不构成对尚未展示的大纲的批准。
 
-**计划项要使用本 skill 的主对象。** 例如“确认 `deck_contract` 与模板边界”“派生 `slide_contracts`”“登记 `image-generation` / chart / diagram `asset_slots`”“生成 editable `pptx` 并导出 preview”“跑 quality gates 并做 visual review”。如果计划是给用户看的，可以用自然语言解释这些对象，但不要退回到无结构的泛称。
+**提问阶段一次只问一个高影响问题。** 先读取 `references/workflow/grill_me.md`，扫描用户提示、附件、模板、旧稿、品牌材料和数据源；不要询问能够直接查明的事实。能够推导的选择在共同理解摘要中披露依据，不把用户变成内部字段填写者。
 
-**生图任务也要进入计划。** 需要 GPT 生图时，计划应写清 `image-generation asset_slot -> prompt / API backend -> output_files / metadata -> image_generated review`，不能让生图绕过 slot 合同直接成为页面素材。
+**workspace 在提问开始时初始化。** 完成材料扫描并确定工作目录后，立即建立 `brief.md`、`deck_narrative.md` 和标准目录，再记录问题、答案、预览与状态。不要等到需要生成大纲时才补 workspace。
 
-**计划状态要随工作更新。** 每完成一个主阶段就更新状态；如果因为缺数据、缺权限、缺 API 或缺预览工具而阻塞，应把对应 slot 或 gate 标记为 `blocked` / `not_checked`，不要用占位文件伪装完成。
+**只有当前完整大纲的明确批准才能执行。** 模板选择、风格预览满意、任务开头的继续授权都不等于批准。将 `outline_version`、批准状态和证据写入 `deck_narrative.md` frontmatter；大纲实质修改后递增版本并重置批准。
+
+**build 前运行 workflow gate。** 新 deck 和重大重构必须通过 `validate_workflow_gate.py --target build --require-workflow`。缺少批准、批准版本不匹配、流程处于 `blocked` / `stopped` 时不得生产资产或组装 PPT。
+
+**评价与修正审阅成品，不重复审阅抽象计划。** 先交付 editable PPTX、预览和验证摘要，再把反馈落到具体页面和问题；需要改变高影响决策时返回“反馈”阶段重新批准。
 
 ## 什么时候用
 
@@ -56,6 +62,7 @@ description: Use when collaborating with humans to produce polished, editable, h
 按下面顺序执行，避免把 PPT 任务退化成“边画边想”。
 
 1. **用通俗语言确认需求，不把内部字段抛给用户**
+- 新建整套 deck 或重大重构先读取 `references/workflow/grill_me.md`。扫描现有材料后初始化 workspace，再一次只问一个会改变交付结果的问题；不要一次抛出整张问卷。
 - 先问清这份 PPT 是发给别人自己看懂，还是主要配合现场讲；有没有必须沿用的模板、旧 PPT 或品牌素材；更像商业汇报、技术说明、研究材料，还是发布会 / 分享型演示；后续是否还会频繁改数据、图表或结构。
 - 内部可以记录 `source_context`、`delivery_context`、`communication_profile`、`visual_profile`、`density_profile`、`editability_profile`，但对用户应使用自然语言确认。
 - 简单任务走轻量路径，不强制完整展开所有合同字段；整套 deck、强模板、多模块资产、正式外发或复杂图表任务才完整使用合同链路。
@@ -67,9 +74,9 @@ description: Use when collaborating with humans to produce polished, editable, h
 - 不要把“照着模板做”理解成配色模仿。默认应理解为继承同一套页面系统。
 - 如果没有模板但有风格诉求，先锁 style / domain profile、可借鉴边界、禁止品牌元素、免责声明和风险边界。
 
-3. **建立 workspace 与 deck contract**
-- 如果用户没有现成 workspace，先按 `references/workflow/deck_workflow.md` 建立 `brief.md`、`deck_narrative.md`、`assets/`、`data/`、`build/`、`validation/`、`final/` 结构。
-- 新建整套 deck 时，优先使用 `scripts/init_deck_workspace.py` 初始化标准目录和两份主文档模板；没有使用脚本时，也必须手动落出同等结构。
+3. **在已初始化 workspace 中固化 deck contract**
+- 如果用户没有现成 workspace，在提问开始时按 `references/workflow/deck_workflow.md` 建立 `brief.md`、`deck_narrative.md`、`assets/`、`data/`、`build/`、`validation/`、`final/` 结构。
+- 新建整套 deck 时，优先使用 `scripts/init_deck_workspace.py` 初始化标准目录、workflow mapping 和两份主文档模板；没有使用脚本时，也必须手动落出同等结构。
 - `deck_contract` 应记录目标读者、使用场景、目标动作、模板约束、是否自解释、业务类型、视觉方向、信息密度、可编辑性要求、默认 typography / table policy 和验证要求。
 - 默认 typography policy 需要显式区分标题类文本与正文类文本：标题类默认 `1.0` 倍行距并保留 `0.5` 行段前 / 段后，正文类默认 `1.5` 倍行距。
 - 中文任务在没有模板或品牌约束时，默认采用中文宋体、英文 Times New Roman；正文小四约 `12pt`、首行缩进 2 个中文字符、段前段后各 `0.5` 行、`1.5` 倍行距；表格五号约 `10.5pt`、单倍行距、段前段后 `0`、无特殊缩进、上下居中、表头居中、index / 类目列与文本列居左、财务数值列靠右。
@@ -85,9 +92,9 @@ description: Use when collaborating with humans to produce polished, editable, h
 - 需要更完整控制时，再补 `layout_recipe`、`rhythm_role`、`asset_slots`、`visual_constraints`、`profile_validation_rules`。
 - source / delivery / communication / visual / density / editability profile 先看 `references/core/style_profiles.md`；页面原型、图表 / diagram / 语言选择再看 `references/design/design_support.md`；页面级视觉底线、强设计感 native PPTX 语法与网格规则再看 `references/design/slide_design_system.md`。
 
-5. **做 planning checkpoint，再进入具体生产**
-- 对正式 deck、外发 deck、自解释 deck 和“最高质量 / 自由发挥”任务，完整 build 前必须给人类一个 planning checkpoint，至少包括章节结构、逐页 `page_task` / `key_message`、页面可见文案方向、资产需求和 layout 方向。
-- 人类明确确认、或已经在任务中授权 agent 继续执行时，才进入资产生产和 PPT 组装。确认过程可以简短，但不能省略 workspace 与 narrative 的落盘证据。
+5. **生成完整大纲，收集反馈并取得明确批准**
+- 新建整套 deck 与重大重构在完整 build 前必须展示可执行大纲，至少包括章节结构、逐页 `page_task` / `key_message`、页面可见文案方向、资产需求和 layout 方向。
+- 根据反馈修订大纲。只有用户明确批准当前完整版本后，才把 `workflow.state` 设为 `outline_approved` 并记录匹配的版本与批准证据；任务开头的笼统授权不能替代这一步。
 - 进入资产生产和代码编写前，必须先读取 anti-AI-slop prompt，并把其中的约束写入 `brief.md` 或 `deck_narrative.md`。这一步是前置设计输入，不是对尚未生成内容的检查，也不能等到 quality gate 之后再补救。
 - Anti-AI-slop 的最低约束包括：卡片必须承担分组或比较任务；背景必须使用正确的 slide background、母版或原生底层形状；圆角矩形、窄边强调条、阴影和渐变必须有 profile 理由；矩形、节点、panel 和卡片里的文字必须直接写入该 shape，而不是额外叠一个文本框。
 
@@ -97,6 +104,7 @@ description: Use when collaborating with humans to produce polished, editable, h
 - GPT 生图有两条 backend：`gpt-image-api` backend 直接生成图片和元数据；`manual-web` backend 由 agent 写出 prompt 文档，标记为 `pending_user_generation`，等用户把图片放回 workspace 后再登记为同一个 slot 的 output。具体命令和参数看 `references/modules/image_generation_support.md`。
 
 7. **再选 build route 与生成 editable PPT**
+- 资产生产和 PPT 组装前，运行 `validate_workflow_gate.py --target build --require-workflow`；失败时返回提问或反馈阶段，不得绕过。
 - 先看 `references/modules/technical_support.md`，明确每个 slot 对应的实现模块、backend 和验证要求。
 - 再看 `references/workflow/build_routes.md`，确认当前环境能走哪条具体 backend 路线。
 - 优先保留文本、形状、表格、图表和必要 connector 的可编辑性。整页位图和不可维护导出物只能是明确受限场景下的例外。
@@ -117,7 +125,7 @@ description: Use when collaborating with humans to produce polished, editable, h
 - 预览图导出后，应按需要运行 `render_review`，处理结构层看不到的边界触墨和扁平化图像内部风险。
 - `render_review` 之后必须看逐页 preview 或 contact sheet 做人工 visual review，复核顺序固定为 `fatal -> warning -> preference`。
 
-10. **完成初稿后给人类一个修订 checkpoint**
+10. **评价初稿并根据反馈修正**
 - 当 editable `pptx`、预览图、基础 validation 和 visual review 结论都已经齐全时，应把它明确为“可审阅的初稿”，而不是默认继续无限打磨。
 - 这时应主动告诉人类：如果需要进入更细的页面级修订，例如逐页措辞微调、视觉节奏重排、icon 补强、chart 路线切换、研究图重绘、生图替换或模板细节对齐，可以继续做，但这一步通常会显著增加 token 消耗。
 - 如果人类暂时不需要详细修订，就直接交付当前初稿 bundle；如果人类要继续修订，再围绕具体页面和问题进入下一轮。
@@ -128,6 +136,7 @@ description: Use when collaborating with humans to produce polished, editable, h
 - 需要统一定义 workspace、deck contract、slide contract、asset slot、validation bundle 和文档分层时，读取 `references/core/principles.md` 与 `references/core/schema_contract.md`。
 - 需要决定 source / delivery / communication / visual / density / editability profile 时，读取 `references/core/style_profiles.md`。
 - 需要建立 workspace、起草 `brief.md` / `deck_narrative.md`、派生 `slide_specs`、执行主流程和确认验证证据时，读取 `references/workflow/deck_workflow.md`。
+- 新建整套 deck、重大重构、用户触发 `/grill-me` / `grill me` / `深度定制`，或需要把逐题访谈交接到完整制作大纲时，读取 `references/workflow/grill_me.md`。
 - 需要决定页面该用什么 archetype、图表、diagram、语言模式时，读取 `references/design/design_support.md`。
 - 需要决定某类 asset slot 该用什么模块、SDK、backend、脚本、验证方式时，读取 `references/modules/technical_support.md`。
 
@@ -144,7 +153,7 @@ description: Use when collaborating with humans to produce polished, editable, h
 
 ## 质量标准
 
-- 默认交付物至少包含：`brief.md`、`deck_narrative.md`、派生 `slide_specs.yaml`、必要 asset slot 记录、`final/*.pptx` 可编辑交付文件、验证结果、逐页预览图。
+- 默认交付物至少包含：`brief.md`、`deck_narrative.md`、Grill-Me 摘要与大纲批准记录、派生 `slide_specs.yaml`、必要 asset slot 记录、`final/*.pptx` 可编辑交付文件、验证结果、逐页预览图。
 - 没有预览图的 deck 不算完成。
 - 需要 connector 的页面，没有结构校验结果不算完成。
 - 页面风格允许多样，但弱信息、标题层级、网格稳定性和高对比文本是底线。
@@ -163,6 +172,12 @@ python scripts/check_environment.py
 python scripts/init_deck_workspace.py \
   --workspace-dir <path/to/deck_workspace> \
   --title "<deck title>"
+
+# 2a) 完整 build 前验证当前大纲已经明确批准
+python scripts/validate_workflow_gate.py \
+  --workspace-dir <path/to/deck_workspace> \
+  --target build \
+  --require-workflow
 
 # 3) 对参考模板做取证审计
 python scripts/audit_pptx_template.py \

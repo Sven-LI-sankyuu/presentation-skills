@@ -10,7 +10,11 @@
 
 ## 在主链路中的位置
 
-**推荐主链路。** `brief -> style/domain profile lock -> template audit(if pptx) -> narrative -> derive slide_specs -> planning_checkpoint -> assets -> build -> package_preflight -> structure_precheck -> module_validation -> preview -> render_review -> visual_review/contact_sheet -> first_draft_checkpoint -> final`
+**推荐主链路。** `material_scan -> workspace_init -> grill_me -> brief -> style/domain profile lock -> template audit(if pptx) -> narrative -> derive slide_specs -> executable_outline -> feedback -> explicit_approval -> workflow_gate(build) -> assets -> build -> package_preflight -> structure_precheck -> module_validation -> preview -> render_review -> visual_review/contact_sheet -> evaluation_and_revision -> final`
+
+**workflow gate 位于 build 前。** 新 deck 和重大重构必须先运行 `validate_workflow_gate.py --target build --require-workflow`；当前大纲未获明确批准、批准版本不匹配或批准证据为空时，不得开始资产生产或 PPT 组装。这个 gate 不替代 build 后的 package、structure 和 render gate。
+
+**修正前显式转换状态。** `reviewing` 和 `final` 不能直接通过 build gate；收到修正请求后先进入 `revising`。涉及高影响大纲变化时，还要递增版本、重置批准并返回反馈阶段。
 
 **执行顺序必须固定。**
 - 先跑 `package_preflight`，确认 deck 文件本身没有内部不一致和移动端高风险信号。

@@ -10,7 +10,7 @@
 ----------
 1. 创建 data、assets、build、validation 和 final 目录；
 2. 创建图片 prompt / generated、预览、质量 gate 等常用子目录；
-3. 写入带完整 `theme_tokens` 的 `brief.md` 与 `deck_narrative.md` 模板；
+3. 写入带 workflow gate 与完整 `theme_tokens` 的 `brief.md` 与 `deck_narrative.md` 模板；
 4. 默认不覆盖已有文件，除非显式传入 `--force`。
 """
 
@@ -32,11 +32,14 @@ WORKSPACE_DIRS = (
     "assets/tables",
     "build/generated",
     "build/pptx",
+    "build/probes",
     "build/rendered/ppt_preview",
+    "build/rendered/style_preview",
     "validation/package_preflight",
     "validation/structure_precheck",
     "validation/render_review",
     "validation/visual",
+    "validation/workflow",
     "final",
 )
 
@@ -78,6 +81,24 @@ def brief_template(title: str, audience: str, scenario: str, objective: str) -> 
         - editability_profile：fully_editable
         - typography / table policy：见 `deck_narrative.md` frontmatter 的 `theme_tokens`。
 
+        ## Five-Stage Workflow Status
+        - 当前阶段：提问
+        - 流程状态：questioning
+        - 大纲版本：
+        - 大纲反馈：
+        - 大纲批准记录：
+        - 初稿评价摘要：
+        - 修正记录与重新验证证据：
+
+        ## Grill-Me Intake Summary
+        - 当前提问阶段：scope
+        - 已确认事项：
+        - Agent 推导及依据：
+        - 采用的推荐默认：
+        - 高影响选择及下游变化：
+        - NON-FINAL STYLE PREVIEW 文件与反馈：
+        - 未决项 / 阻塞项：
+
         ## 模板取证
         - 页面系统判断：
         - 关键母版 / layout 元素：
@@ -95,7 +116,11 @@ def brief_template(title: str, audience: str, scenario: str, objective: str) -> 
         - 免责声明 / 风险边界：
         - 不允许发生的错误：
 
-        ## Planning Checkpoint
+        ## Production Outline
+        - 大纲版本：
+        - 当前状态：outline_ready / awaiting_outline_feedback / outline_approved
+        - 用户反馈与对应修订：
+        - 明确批准记录：
         - 全局基调：
         - 章节结构：
         - 每页角色和读者问题：
@@ -130,6 +155,13 @@ def narrative_template(title: str, audience: str, scenario: str, objective: str)
           density_profile: "balanced_brief"
           editability_profile: "fully_editable"
           template_file: null
+          personalization:
+            speaker_or_brand_voice: null
+            desired_impression: null
+            must_emphasize: []
+            must_avoid: []
+            visual_likes: []
+            visual_dislikes: []
           theme_tokens:
             typography_profile: "zh_formal"
             domain_profile: null
@@ -162,6 +194,15 @@ def narrative_template(title: str, audience: str, scenario: str, objective: str)
             table_numeric_alignment: "right"
             left_margin_in: 0.78
             right_margin_in: 12.55
+        workflow:
+          version: 1
+          state: "questioning"
+          outline_version: null
+          approval:
+            status: "pending"
+            outline_version: null
+            evidence: null
+            approved_at: null
         ---
 
         # {title}
@@ -171,7 +212,11 @@ def narrative_template(title: str, audience: str, scenario: str, objective: str)
         - 这套 deck 的论证主线：
         - 这套 deck 的主题词和禁区：
 
-        ## Planning Checkpoint
+        ## Production Outline
+        - 大纲版本：
+        - 当前状态：outline_ready / awaiting_outline_feedback / outline_approved
+        - 用户反馈与对应修订：
+        - 明确批准记录：
         - 全局基调：
         - 章节结构：
         - 每页角色和读者问题：
@@ -243,7 +288,7 @@ def main() -> int:
     print(f"[OK] workspace={workspace_dir}")
     print(f"[INFO] brief.md={brief_status}")
     print(f"[INFO] deck_narrative.md={narrative_status}")
-    print("[NEXT] 编辑 brief.md 与 deck_narrative.md，然后派生 build/generated/slide_specs.yaml")
+    print("[NEXT] 按 questioning -> outline -> feedback -> execution -> evaluation_and_revision 推进；大纲未明确批准前不得完整 build")
     return 0
 
 

@@ -5,6 +5,7 @@
 ## 目录
 
 - 主链路
+- Grill-Me 与五阶段状态
 - Workspace
 - `brief.md` 最小模板
 - `deck_narrative.md` 最小模板
@@ -19,16 +20,16 @@
 
 ## 主链路
 
-**默认主链路固定为：** `intake -> source/template lock -> workspace_init -> deck_contract -> narrative -> slide_contracts -> planning_checkpoint -> anti_slop_prompt_intake -> asset_plan -> asset_production -> pptx_assembly -> package_preflight -> structure_precheck -> module_validation -> preview -> render_review -> visual_review -> first_draft_checkpoint -> detailed_revision(optional) -> final`。
+**顶层协作流程固定为：** `提问 -> 生成大纲 -> 反馈 -> 执行大纲产出结果 -> 评价与修正`。详细生产链路仍为：`material_scan -> workspace_init -> grill_me -> source/template lock -> deck_contract -> narrative / slide_contracts -> outline_feedback_approval -> anti_slop_prompt_intake -> asset_plan -> asset_production -> pptx_assembly -> package_preflight -> structure_precheck -> module_validation -> preview -> render_review -> visual_review -> revision -> final`。
 
 ```mermaid
 flowchart LR
-  A[Intake] --> B[Source / Template Lock]
-  B --> C[Workspace Init]
-  C --> D[deck_contract in brief.md]
+  A[Material Scan] --> C[Workspace Init]
+  C --> B[Grill-Me / Source Lock]
+  B --> D[deck_contract in brief.md]
   D --> E[deck_narrative.md]
   E --> F[Derived slide_contracts]
-  F --> G[Planning Checkpoint]
+  F --> G[Executable Outline / Feedback / Approval]
   G --> H[Anti-slop Prompt Intake]
   H --> I[Asset Plan]
   I --> J[Asset Production]
@@ -39,13 +40,13 @@ flowchart LR
   N --> O[Preview Export]
   O --> P[Render Review]
   P --> Q[Visual Review / Contact Sheet]
-  Q --> R[First Draft Checkpoint]
+  Q --> R[Evaluation and Revision]
   R --> S[Final Delivery]
   R --> T[Detailed Revision Optional]
   T --> K
 ```
 
-**intake 用人话完成。** agent 应问清“这份 PPT 是发出去让别人自己看懂，还是配合你现场讲”“有没有必须沿用的模板或旧 PPT”“更像商业汇报、技术说明、研究材料，还是设计感演示”“后续是否还会改数据、图表或结构”。内部字段可以记录在合同里，不应把字段名直接抛给用户。
+**intake 使用 Grill-Me 协议。** 新建整套 deck 与重大重构读取 `references/workflow/grill_me.md`，先扫描已有材料，再一次只问一个会改变结果的问题。完整 brief 可以快速收敛，但仍要展示可执行大纲并获得针对当前版本的明确批准。
 
 **先锁 source / template，再写 deck contract。** 用户给的 `pptx`、旧稿、品牌素材或风格样张，需要先判断是结构约束、风格参考、内容来源还是品牌边界。这个判断决定后面是否必须做 template audit，以及通用默认 typography 是否只能作为回退基线。
 
@@ -63,9 +64,9 @@ flowchart LR
 
 **在 narrative 阶段就要把增强资产选项告诉人类。** agent 应明确说明当前可用的 icon、原生 Office chart、Python figure、diagram、原生表格、普通图片和 GPT 生图路线，让人类按需指定更偏编辑性、更偏研究表达、还是更偏视觉节奏的方向。
 
-**planning checkpoint 是 build 前阶段门。** 正式 deck、外发 deck、自解释 deck，以及用户要求“最高质量 / 研报风格 / 公开课 / 自由发挥”的任务，在完整 build 之前必须展示或记录 planning checkpoint。checkpoint 至少覆盖：全局基调、章节结构、逐页页面角色、逐页 `key_message`、可见文案方向、资产 / 配图需求、layout recipe 和 rhythm role。用户确认或明确授权继续后，才进入资产生产和 PPT 组装。
+**完整制作大纲与明确批准是 build 前阶段门。** 大纲至少覆盖：全局基调、章节结构、逐页页面角色、逐页 `key_message`、可见文案方向、资产 / 配图需求、layout recipe 和 rhythm role。任务开头的“直接做”“自由发挥”或一般性继续授权不算批准；只有用户明确批准当前完整大纲后，才进入资产生产和 PPT 组装。
 
-**anti-slop prompt intake 是代码前阶段门。** planning checkpoint 之后、资产生产和 PPT 组装之前，agent 必须先读入 anti-slop prompt，并把每页要避免的模型默认装饰套路写入 `deck_narrative.md` 的 planning checkpoint 或页面 `Layout Notes`：无理由卡片化、圆角矩形泛滥、窄边强调条滥用、整页可移动图片或形状背景、矩形上叠文本框、阴影和渐变补丁。这里是前置约束导入，不是对尚未生成内容的验收。
+**anti-slop prompt intake 是代码前阶段门。** 完整大纲获批后、资产生产和 PPT 组装之前，agent 必须先读入 anti-slop prompt，并把每页要避免的模型默认装饰套路写入 `deck_narrative.md` 的 `Production Outline` 或页面 `Layout Notes`：无理由卡片化、圆角矩形泛滥、窄边强调条滥用、整页可移动图片或形状背景、矩形上叠文本框、阴影和渐变补丁。这里是前置约束导入，不是对尚未生成内容的验收。
 
 **asset_plan 统一由 slot 承载。** 图表、Python figure、diagram、icon、表格、普通图片和 GPT 生图都先登记为 `asset_slots`，再进入对应模块。PPT 组装阶段只消费 slide contracts 和已登记 slot，不在组装时临时发明页面逻辑。
 
@@ -190,6 +191,24 @@ python scripts/audit_pptx_template.py \
 - editability_profile：
 - typography / table policy：
 
+## Five-Stage Workflow Status
+- 当前阶段：提问
+- 流程状态：questioning
+- 大纲版本：
+- 大纲反馈：
+- 大纲批准记录：
+- 初稿评价摘要：
+- 修正记录与重新验证证据：
+
+## Grill-Me Intake Summary
+- 当前提问阶段：scope
+- 已确认事项：
+- Agent 推导及依据：
+- 采用的推荐默认：
+- 高影响选择及下游变化：
+- NON-FINAL STYLE PREVIEW 文件与反馈：
+- 未决项 / 阻塞项：
+
 ## 模板取证
 - 页面系统判断：
 - 关键母版 / layout 元素：
@@ -231,6 +250,13 @@ deck:
   density_profile: "balanced_brief"
   editability_profile: "fully_editable"
   template_file: null
+  personalization:
+    speaker_or_brand_voice: null
+    desired_impression: null
+    must_emphasize: []
+    must_avoid: []
+    visual_likes: []
+    visual_dislikes: []
   theme_tokens:
     typography_profile: "zh_formal"
     domain_profile: null
@@ -263,6 +289,15 @@ deck:
     table_numeric_alignment: "right"
     left_margin_in: 0.78
     right_margin_in: 12.55
+workflow:
+  version: 1
+  state: "questioning"
+  outline_version: null
+  approval:
+    status: "pending"
+    outline_version: null
+    evidence: null
+    approved_at: null
 ---
 
 # <Deck Title>
@@ -272,7 +307,11 @@ deck:
 - 这套 deck 的论证主线：
 - 这套 deck 的主题词和禁区：
 
-## Planning Checkpoint
+## Production Outline
+- 大纲版本：
+- 当前状态：outline_ready / awaiting_outline_feedback / outline_approved
+- 用户反馈与对应修订：
+- 明确批准记录：
 - 全局基调：
 - 章节结构：
 - 每页角色和读者问题：
@@ -354,11 +393,11 @@ python scripts/derive_slide_specs_from_narrative.py \
 
 **build 脚本应优先读取派生文件。** 如果派生文件不存在，build 脚本应先生成它，再继续执行。
 
-## Planning Checkpoint
+## Production Outline And Approval
 
-**checkpoint 仍使用现有文档层。** 它默认从 `deck_narrative.md` 汇总出来，可以写在对话、review note 或 `deck_narrative.md` 的 `Planning Checkpoint` 小节中，不需要另起长期维护的 plan 文件。
+**大纲仍使用现有文档层。** 它默认从 `deck_narrative.md` 汇总出来，可以写在对话、review note 或 `deck_narrative.md` 的 `Production Outline` 小节中，不需要另起长期维护的 plan 文件。
 
-**checkpoint 至少回答七个问题。**
+**完整大纲至少回答七个问题。**
 - 整套 deck 的基调和传播场景是什么。
 - 章节顺序如何支撑主判断。
 - 每页承担什么页面角色和读者问题。
@@ -367,7 +406,18 @@ python scripts/derive_slide_specs_from_narrative.py \
 - 每页采用什么 layout recipe、密度和 rhythm role。
 - 每页如何避免无理由卡片化、整页可移动背景、圆角矩形泛滥、窄边装饰条和矩形上叠文本框。
 
-**checkpoint 通过后才进入完整 build。** 用户已经明确授权 agent 继续执行时，可以不等待逐页口头确认，但必须在 workspace 中留下上述规划信息。
+**明确批准当前大纲后才进入完整 build。** 不要求用户逐页口头确认，但必须展示完整大纲，并把当前 `outline_version` 与用户批准证据写入 `workflow.approval`。模板或风格选择不等于大纲批准；任务开始时的笼统授权也不批准尚未展示的大纲。大纲实质修改后递增版本并重置批准。
+
+**build 前运行 workflow gate。** 新 deck 与重大重构执行：
+
+```bash
+python scripts/validate_workflow_gate.py \
+  --workspace-dir <path/to/deck_workspace> \
+  --target build \
+  --require-workflow
+```
+
+旧 workspace 缺少 `workflow` 时，不带 `--require-workflow` 的兼容检查只给 warning；一旦采用五阶段新流程，就不得用兼容模式绕过批准。
 
 ## 字段与验证约定
 
@@ -377,6 +427,6 @@ python scripts/derive_slide_specs_from_narrative.py \
 
 ## 交付底线
 
-**完整交付至少包含八项。** `brief.md`、`deck_narrative.md`、planning checkpoint 记录、派生 `slide_specs.yaml`、`final/*.pptx` 可编辑交付文件、逐页预览图、与页面验证模式相匹配的验证结果、final 前 visual review 结论。
+**完整交付至少包含八项。** `brief.md`、`deck_narrative.md`、Grill-Me 摘要与大纲批准记录、派生 `slide_specs.yaml`、`final/*.pptx` 可编辑交付文件、逐页预览图、与页面验证模式相匹配的验证结果、final 前 visual review 结论。
 
 **每次修改都要有新证据。** 修复后必须能指出新的 `pptx`、新的 preview，或新的结构校验结果。
