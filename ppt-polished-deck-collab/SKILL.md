@@ -34,6 +34,8 @@ description: Use when collaborating with humans to produce polished, editable, h
 
 如果 agent 使用显式 plan、checklist 或任务追踪，计划必须写成本 skill 的工作范式，而不是泛泛写“制作 PPT / 调整设计 / 检查结果”。
 
+**需求收敛使用 PPT 专项 checklist，并与通用 Grill-Me 分离。** 新建整套 deck 与重大重构先读取 `references/workflow/deck_intake_checklist.md`。它负责补齐 deck contract 与 planning checkpoint 所需的高影响决策；已有完整 brief 时跳过已知项，明确的小范围修改不启动完整清单。
+
 **复杂 deck 必须有阶段门。** 正式 deck 的 plan 不能直接从需求跳到 `pptx_assembly`。必须先完成 workspace 初始化、`brief.md`、`deck_narrative.md`、页面顶层设计和 planning checkpoint，再进入资产生产与完整 build。
 
 **复杂 deck 的计划骨架应对齐主链路。** 推荐计划项按 `deck_contract -> narrative / slide_contracts -> asset_slots -> build route / native PPTX -> validation / preview -> human checkpoint` 展开。轻量任务可以压缩成两三项，但仍要看得出正在先锁合同、再处理资产、最后验证。
@@ -56,6 +58,7 @@ description: Use when collaborating with humans to produce polished, editable, h
 按下面顺序执行，避免把 PPT 任务退化成“边画边想”。
 
 1. **用通俗语言确认需求，不把内部字段抛给用户**
+- 新建整套 deck 或重大重构先扫描现有材料，再按 `references/workflow/deck_intake_checklist.md` 确认仍未知的高影响事项。一次只问一个问题；能够查明、推导或安全默认的内容不要重复询问。
 - 先问清这份 PPT 是发给别人自己看懂，还是主要配合现场讲；有没有必须沿用的模板、旧 PPT 或品牌素材；更像商业汇报、技术说明、研究材料，还是发布会 / 分享型演示；后续是否还会频繁改数据、图表或结构。
 - 内部可以记录 `source_context`、`delivery_context`、`communication_profile`、`visual_profile`、`density_profile`、`editability_profile`，但对用户应使用自然语言确认。
 - 简单任务走轻量路径，不强制完整展开所有合同字段；整套 deck、强模板、多模块资产、正式外发或复杂图表任务才完整使用合同链路。
@@ -128,6 +131,7 @@ description: Use when collaborating with humans to produce polished, editable, h
 - 需要统一定义 workspace、deck contract、slide contract、asset slot、validation bundle 和文档分层时，读取 `references/core/principles.md` 与 `references/core/schema_contract.md`。
 - 需要决定 source / delivery / communication / visual / density / editability profile 时，读取 `references/core/style_profiles.md`。
 - 需要建立 workspace、起草 `brief.md` / `deck_narrative.md`、派生 `slide_specs`、执行主流程和确认验证证据时，读取 `references/workflow/deck_workflow.md`。
+- 需要为新 deck 或重大重构补齐生产前必需信息、避免重复提问并把结果交接到 planning checkpoint 时，读取 `references/workflow/deck_intake_checklist.md`。
 - 需要决定页面该用什么 archetype、图表、diagram、语言模式时，读取 `references/design/design_support.md`。
 - 需要决定某类 asset slot 该用什么模块、SDK、backend、脚本、验证方式时，读取 `references/modules/technical_support.md`。
 

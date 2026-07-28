@@ -47,6 +47,8 @@ flowchart LR
 
 **intake 用人话完成。** agent 应问清“这份 PPT 是发出去让别人自己看懂，还是配合你现场讲”“有没有必须沿用的模板或旧 PPT”“更像商业汇报、技术说明、研究材料，还是设计感演示”“后续是否还会改数据、图表或结构”。内部字段可以记录在合同里，不应把字段名直接抛给用户。
 
+**intake 使用 PPT 专项 checklist。** 新建整套 deck 与重大重构读取 `references/workflow/deck_intake_checklist.md`，先扫描已有材料，再一次只确认一个仍未知且会改变产物的事项。清单负责收敛 deck contract 所需信息，不承担通用 Grill-Me 的开放探索职责；完整 brief 和小范围修改走对应的轻量路径。
+
 **先锁 source / template，再写 deck contract。** 用户给的 `pptx`、旧稿、品牌素材或风格样张，需要先判断是结构约束、风格参考、内容来源还是品牌边界。这个判断决定后面是否必须做 template audit，以及通用默认 typography 是否只能作为回退基线。
 
 **先建 workspace，再写内容。** 整套 deck 任务应先落出标准 workspace。推荐使用 `scripts/init_deck_workspace.py` 创建目录、`brief.md` 和 `deck_narrative.md` 模板；如果手动创建，结构必须与本文 workspace 约定等价。
